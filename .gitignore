@@ -4,3 +4,6 @@
 # Raw Google Maps scrapes — kept local only
 DATASET/00_*.csv
 DATASET/0[2-9]_*.csv
+
+# Mapbox token — kept local only
+js/config.js

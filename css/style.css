@@ -1,0 +1,1545 @@
+:root {
+  /* Greyscale palette, light mode */
+  --white: #ffffff;
+  --grey-50: #f5f5f5;
+  --grey-200: #e0e0e0;
+  --grey-500: #8a8a8a;
+  --grey-800: #2b2b2b;
+  --black: #111111;
+  --neutral-50: #f9f8f7;
+  --neutral-100: #f4f3f1;
+  --neutral-200: #e2e1df;
+  --neutral-500: #777674;
+  --neutral-600: #4f4d4a;
+  --neutral-700: #353332;
+  --neutral-900: #191919;
+
+  --bg: var(--white);
+  --text: var(--black);
+  --border: var(--grey-200);
+
+  --font: "Host Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --radius-pill: 99pt;
+  --shadow-card: 0 0 20px rgba(0, 0, 0, 0.12);
+
+  /* Studio pop-up: snappy entrance; the exit is its exact time-reverse
+     (cubic-bezier(a, b, c, d) reversed = cubic-bezier(1-c, 1-d, 1-a, 1-b)) */
+  --popup-duration: 200ms;
+  --popup-ease-in: cubic-bezier(0.2, 0.9, 0.3, 1);
+  --popup-ease-out: cubic-bezier(0.7, 0, 0.8, 0.1);
+  --popup-chip-interval-min: 40ms; /* service chips enter one by one, shuffled, */
+  --popup-chip-interval-max: 110ms; /* each a random interval after the previous */
+
+  /* Bottom cards: float up + fade in after the pop-up, staggered; quick fade out */
+  --cards-enter-duration: 450ms;
+  --cards-enter-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --cards-enter-distance: 16px;
+  --cards-enter-stagger: 80ms;
+  --cards-exit-duration: 150ms;
+
+  /* Top-nav pills (logo, Creative Ecosystem, chart/info) share one height */
+  --nav-height: 44px;
+  --nav-inset: 8px; /* space between a pill's edge and the chips inside it */
+
+  /* 12-column grid */
+  --grid-columns: 12;
+  --grid-margin: 24px;
+  --grid-gutter: 12px;
+  --grid-col: calc((100vw - 2 * var(--grid-margin) - (var(--grid-columns) - 1) * var(--grid-gutter)) / var(--grid-columns));
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+  column-gap: var(--grid-gutter);
+  padding-inline: var(--grid-margin);
+}
+
+/* Button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75em 1.5em;
+  border: 1px solid var(--black);
+  border-radius: var(--radius-pill);
+  background: var(--black);
+  color: var(--white);
+  font: 500 1rem/1 var(--font);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.btn:hover {
+  background: var(--white);
+  color: var(--black);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--grey-500);
+  outline-offset: 3px;
+}
+
+.btn--ghost {
+  background: var(--white);
+  color: var(--black);
+}
+
+.btn--ghost:hover {
+  background: var(--black);
+  color: var(--white);
+}
+
+/* Home */
+.home {
+  min-height: 100%;
+  align-content: center;
+  padding-block: var(--grid-margin);
+}
+
+.home__row {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.home__title {
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 4.5rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+/* Map */
+.map-page {
+  position: relative;
+  height: 100%;
+}
+
+#basemap {
+  position: absolute;
+  inset: 0;
+  background: var(--grey-50);
+}
+
+.map-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  align-content: start;
+  align-items: start;
+  padding-block: var(--grid-margin);
+  pointer-events: none;
+}
+
+.map-overlay > * {
+  pointer-events: auto;
+}
+
+/* Left column: logo pill above the "Now Viewing" card (3 columns) */
+.map-overlay__left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  grid-row: 1;
+  grid-column: 1 / span 3;
+}
+
+.map-overlay__left > * {
+  pointer-events: auto;
+}
+
+/* Top-left nav: home pill | "Map View" pill | logo, side by side with no gap */
+.map-nav {
+  display: flex;
+  align-items: center;
+}
+
+.control-pill.map-nav__home,
+.control-pill.map-nav__title {
+  padding: 0 calc(16px - var(--pill-border));
+  text-decoration: none;
+}
+
+.map-nav__home:hover {
+  background: var(--grey-50);
+}
+
+.map-nav__title {
+  color: var(--neutral-900);
+  font: 600 16px/1.24 var(--font);
+  white-space: nowrap;
+}
+
+/* Logo: the registered SVG at nav height; its three dark shapes turn #FF0000 on hover */
+.map-nav__logo {
+  display: flex;
+  border-radius: var(--radius-pill);
+}
+
+.brand-logo {
+  display: block;
+  width: auto;
+  height: var(--nav-height);
+}
+
+.brand-logo path[fill="#232221"] {
+  transition: fill 0.15s ease;
+}
+
+.map-nav__logo:hover .brand-logo path[fill="#232221"],
+.map-nav__logo:focus-visible .brand-logo path[fill="#232221"] {
+  fill: #ff0000;
+}
+
+.map-nav__home:focus-visible,
+.map-nav__logo:focus-visible {
+  outline: 2px solid var(--grey-500);
+  outline-offset: 2px;
+}
+
+/* Right column: Creative Ecosystem pill above the legend card */
+.map-overlay__side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  grid-row: 1;
+  grid-column: 10 / span 3;
+}
+
+/* Legend stays 2 columns wide; the about card above it takes all 3 */
+.map-overlay__side > .legend {
+  width: calc(var(--grid-col) * 2 + var(--grid-gutter));
+}
+
+.map-overlay__side > .about-card {
+  align-self: stretch;
+}
+
+.map-overlay__side > * {
+  pointer-events: auto;
+}
+
+@media (max-width: 1024px) {
+  .map-overlay__side {
+    grid-column: 7 / span 6;
+  }
+
+  .map-overlay__side > .legend {
+    width: calc(var(--grid-col) * 4 + var(--grid-gutter) * 3);
+  }
+}
+
+@media (max-width: 640px) {
+  .map-overlay__left {
+    grid-column: 1 / -1;
+  }
+
+  .map-overlay__side {
+    grid-row: 2;
+    grid-column: 6 / span 7;
+    margin-top: var(--grid-gutter);
+  }
+}
+
+/* Map controls row: icon pills side by side with no gap */
+.map-controls {
+  display: flex;
+  align-items: center;
+}
+
+/* White pill holding control chips, --nav-height tall. Figma draws its 1.128px borders
+   inside the shape, so horizontal padding is reduced by the border to keep Figma sizes. */
+.control-pill {
+  --pill-border: 1.128px;
+  display: flex;
+  align-items: center;
+  height: var(--nav-height);
+  padding: 0 calc(var(--nav-inset) - var(--pill-border));
+  border: var(--pill-border) solid var(--neutral-100);
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.12));
+}
+
+.control-chip {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: calc(var(--nav-height) - 2 * var(--nav-inset));
+  padding: 0;
+  border: 1.128px solid var(--neutral-200);
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  cursor: pointer;
+}
+
+.control-chip:hover {
+  background: var(--grey-50);
+}
+
+.control-chip:focus-visible {
+  outline: 2px solid var(--grey-500);
+  outline-offset: 2px;
+}
+
+.chip-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.chip-button:hover {
+  opacity: 0.6;
+}
+
+.chip-button:focus-visible {
+  outline: 2px solid var(--grey-500);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Legend toggle: dimmed while the legend card is hidden */
+.legend-toggle[aria-expanded="false"] {
+  opacity: 0.35;
+}
+
+/* Icon pills (eye | chart + legend | info): icons sit directly in the pill,
+   14px from the sides and 8px apart */
+.control-pill--icons {
+  gap: 8px;
+  padding: 0 calc(14px - var(--pill-border));
+}
+
+/* Eye: hides every legend category except directory numbers */
+.ecosystem__eye {
+  position: relative;
+  display: block;
+  width: 22px;
+  height: 22px;
+}
+
+.ecosystem__eye img {
+  position: absolute;
+  top: 12.5%;
+  left: 0;
+}
+
+/* Hidden state: a slash across the eye */
+.ecosystem__toggle[aria-pressed="false"] .ecosystem__eye::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 26px;
+  height: 1.5px;
+  border-radius: 1px;
+  background: var(--neutral-900);
+  box-shadow: 0 0 0 1px var(--white);
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* Modal: 8 grid columns wide, centered on the page */
+.modal {
+  width: calc(var(--grid-col) * 8 + var(--grid-gutter) * 7);
+  max-width: calc(100vw - 2 * var(--grid-margin));
+  max-height: calc(100dvh - 2 * var(--grid-margin));
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--neutral-100);
+  border-radius: 26px;
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+  color: var(--neutral-900);
+  font-family: var(--font);
+}
+
+.modal[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal::backdrop {
+  background: rgba(25, 25, 25, 0.24);
+}
+
+.modal__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 12px 12px 24px;
+  border-bottom: 1px solid var(--neutral-100);
+}
+
+.modal__title {
+  flex: 1 0 0;
+  margin: 0;
+  font: 600 16px/1.12 var(--font);
+}
+
+/* Empty for now; keeps the modal at a readable size until content arrives */
+.modal__body {
+  min-height: calc(100dvh * 5 / 12);
+  overflow-y: auto;
+  padding: 24px;
+}
+
+/* Legend card */
+.legend {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--neutral-100);
+  border-radius: 26px;
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+}
+
+.legend__list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 12px;
+  list-style: none;
+}
+
+/* The legend toggle in the Creative Ecosystem pill hides the whole card */
+.legend[hidden] {
+  display: none;
+}
+
+.legend__item {
+  display: flex;
+  align-items: center;
+  gap: 6.3px;
+  width: 100%;
+  min-height: 16px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--black);
+  font: 500 10px/1.12 var(--font);
+  text-align: left;
+  cursor: pointer;
+}
+
+/* Directory numbers are always shown, so their row is a plain label */
+.legend__item--static {
+  cursor: default;
+}
+
+.legend__item:focus-visible {
+  outline: 2px solid var(--grey-500);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.legend__item img,
+.legend__label {
+  transition: opacity 0.15s ease;
+}
+
+.legend__item img {
+  flex-shrink: 0;
+}
+
+.legend__label {
+  flex: 1 0 0;
+  min-width: 0;
+}
+
+/* Eye toggle: shown on hover/focus, kept visible while a layer is hidden */
+.legend__eye {
+  display: flex;
+  flex-shrink: 0;
+  color: var(--grey-500);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.legend__item:hover .legend__eye,
+.legend__item:focus-visible .legend__eye,
+.legend__item[aria-pressed="false"] .legend__eye {
+  opacity: 1;
+}
+
+.legend__item:hover .legend__eye {
+  color: var(--neutral-900);
+}
+
+.legend__eye-off,
+.legend__item[aria-pressed="false"] .legend__eye-on {
+  display: none;
+}
+
+.legend__item[aria-pressed="false"] .legend__eye-off {
+  display: block;
+}
+
+.legend__item[aria-pressed="false"] img,
+.legend__item[aria-pressed="false"] .legend__label {
+  opacity: 0.35;
+}
+
+.legend__divider {
+  position: relative;
+  height: 0;
+}
+
+.legend__divider img {
+  position: absolute;
+  top: -0.93px;
+  left: 0;
+}
+
+/* Active directory number (map marker) */
+.directory-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgb(31, 31, 31);
+  color: var(--white);
+  font: 500 11px/1 var(--font);
+  pointer-events: none;
+}
+
+/* Studio pop-up (map marker) on the active directory number. The element itself is the
+   24px anchor box centered on the number; everything else is positioned from it. */
+.studio-popup {
+  width: 24px;
+  height: 24px;
+  pointer-events: none;
+}
+
+.studio-popup__body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: opacity var(--popup-duration) var(--popup-ease-in);
+}
+
+/* Reveal: services and logo/name grow out from the number's center (and back in on hide)
+   while the whole pop-up fades. Each starts with its corner nearest the anchor moved
+   onto the anchor's center. */
+.studio-popup__info {
+  transform-origin: left top;
+  transition: transform var(--popup-duration) var(--popup-ease-in);
+}
+
+/* Each service chip moves out on its own, after its own --chip-delay (shuffled in map.js).
+   Collapsed, its bottom-right corner sits on the anchor's center: --chip-shift-y is its
+   distance above the bottom of the stack. */
+.studio-popup__service {
+  transform-origin: right bottom;
+  transition:
+    transform var(--popup-duration) var(--popup-ease-in) var(--chip-delay, 0ms),
+    opacity var(--popup-duration) var(--popup-ease-in) var(--chip-delay, 0ms);
+}
+
+.studio-popup--collapsed .studio-popup__body {
+  opacity: 0;
+}
+
+.studio-popup--collapsed .studio-popup__info {
+  transform: translate(-24.18px, 0) scale(0.2);
+}
+
+.studio-popup--collapsed .studio-popup__service {
+  opacity: 0;
+  transform: translate(24.32px, calc(var(--chip-shift-y, 0px) + 0.4px)) scale(0.2);
+}
+
+/* Exit runs the entrance backwards in time: mirrored curve, chips leave in reverse order */
+.studio-popup--collapsed .studio-popup__body,
+.studio-popup--collapsed .studio-popup__info {
+  transition-timing-function: var(--popup-ease-out);
+}
+
+.studio-popup--collapsed .studio-popup__service {
+  transition-timing-function: var(--popup-ease-out);
+  transition-delay: var(--chip-exit-delay, 0ms);
+}
+
+/* Logo + name: 36px right of and 12px below the anchor's top-left */
+.studio-popup__info {
+  position: absolute;
+  top: 12px;
+  left: 36.18px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.studio-popup__logo {
+  flex-shrink: 0;
+  width: 88.94px;
+  height: 88.94px;
+  margin-right: -12.23px;
+  border-radius: 8.89px;
+  background: var(--grey-50);
+  box-shadow: 0 0 22.24px rgba(0, 0, 0, 0.12);
+  object-fit: cover;
+}
+
+.studio-popup__name,
+.studio-popup__service {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11.12px 13.34px;
+  border-radius: 110px;
+  filter: drop-shadow(0 0 11.12px rgba(0, 0, 0, 0.12));
+  white-space: nowrap;
+}
+
+.studio-popup__name {
+  position: relative;
+  background: var(--white);
+  color: var(--black);
+  font: 600 17.79px/1.12 var(--font);
+  letter-spacing: 0.18px;
+}
+
+/* Primary services: right edge 12.3px left of the anchor, bottom 12.4px above its bottom */
+.studio-popup__services {
+  position: absolute;
+  right: calc(100% + 12.32px);
+  bottom: 12.4px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4.45px;
+}
+
+.studio-popup__service {
+  color: var(--white);
+  font: 600 12px/1.12 var(--font);
+  letter-spacing: 0.12px;
+}
+
+.studio-popup__service:nth-child(1) { background: #000000; }
+.studio-popup__service:nth-child(2) { background: #ff0000; }
+.studio-popup__service:nth-child(3) { background: #7b7b7b; }
+
+/* POI card (map marker): stacked over the clicked POI, icon centered on its point */
+.poi-card {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px 6px 10px;
+  border: 1px solid var(--neutral-100);
+  border-radius: 26px;
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+  pointer-events: none; /* clicks fall through to the map, so the POI underneath can toggle it */
+}
+
+.poi-card__icon {
+  flex-shrink: 0;
+}
+
+.poi-card__text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.poi-card__category {
+  margin: 0;
+  color: var(--neutral-500);
+  font: 400 10px/1.12 var(--font);
+}
+
+.poi-card__name {
+  margin: 0;
+  color: var(--black);
+  font: 600 14px/1.12 var(--font);
+}
+
+/* Zoom cursor (Figma "zoom-cursor"): 28px dark circle, hotspot at its center.
+   Used on the Project card image and the Now Viewing studio photo. */
+.section-card__image,
+.view__photo {
+  cursor: url("../assets/icons/cursor-zoom.svg") 14 14, zoom-in;
+}
+
+/* Image viewer (js/image-viewer.js): full screen, black 24% + 12px blur behind.
+   Any click closes it, so the whole viewer uses the close cursor. */
+.viewer {
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  cursor: url("../assets/icons/cursor-close.svg") 14 14, pointer;
+  touch-action: none;
+  user-select: none;
+}
+
+.viewer[open] {
+  display: block;
+}
+
+/* The viewer itself takes focus when opened; no outline around the whole screen */
+.viewer:focus {
+  outline: none;
+}
+
+.viewer::backdrop {
+  background: rgba(0, 0, 0, 0.24);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.viewer__stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.viewer__media {
+  display: block;
+  flex-shrink: 0;
+  max-width: none;
+  border-radius: calc(26px / var(--viewer-zoom, 1));
+  transform-origin: center;
+  pointer-events: none;
+}
+
+/* Close badge: only on devices without a hover cursor (tablets, phones), top right */
+.viewer__close {
+  position: fixed;
+  top: var(--grid-margin);
+  right: var(--grid-margin);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--neutral-900);
+  pointer-events: none;
+}
+
+@media (hover: none) {
+  .viewer__close {
+    display: flex;
+  }
+}
+
+/* Directory section cards (bottom row) */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.directory-sections {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  align-items: end;
+  padding-block: var(--grid-margin);
+  pointer-events: none;
+}
+
+/* Mapbox logo and attribution stay pinned to the page bottom, inside the 24px margin under the cards */
+#basemap .mapboxgl-ctrl-bottom-left,
+#basemap .mapboxgl-ctrl-bottom-right {
+  bottom: 0;
+}
+
+#basemap .mapboxgl-ctrl-bottom-left .mapboxgl-ctrl,
+#basemap .mapboxgl-ctrl-bottom-right .mapboxgl-ctrl {
+  margin-bottom: 0;
+}
+
+.directory-sections[hidden] {
+  display: none;
+}
+
+/* Entrance (no state class): each card floats up and fades in, delayed by its own
+   --enter-delay (a shuffled stagger set in map.js) so they don't arrive together */
+.directory-sections .section-card {
+  transition:
+    opacity var(--cards-enter-duration) var(--cards-enter-ease) var(--enter-delay, 0ms),
+    transform var(--cards-enter-duration) var(--cards-enter-ease) var(--enter-delay, 0ms);
+}
+
+/* Loading / leaving: quick fade out in place; the offset is applied once invisible,
+   ready for the next float-up */
+.directory-sections.is-loading .section-card,
+.directory-sections.is-leaving .section-card {
+  opacity: 0;
+  transform: translateY(var(--cards-enter-distance));
+  transition:
+    opacity var(--cards-exit-duration) linear,
+    transform 0s linear var(--cards-exit-duration);
+}
+
+.section-card {
+  grid-column: span 3;
+  max-height: calc(100dvh * 5 / 12);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--neutral-100);
+  border-radius: 26px;
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+  pointer-events: auto;
+}
+
+.section-card__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+}
+
+.section-card__title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.section-card__name {
+  margin: 0;
+  color: var(--black);
+  font: 600 14px/1.12 var(--font);
+}
+
+/* Practices card starts with a heading whose line box sits tight to the cap height,
+   so it gets 4px more top padding for optical alignment with the other cards */
+[data-section="practices"] .section-card__inner {
+  padding-top: 16px;
+}
+
+.section-card__group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.section-card__note {
+  margin: 0;
+  color: var(--neutral-500);
+  font: 400 10px/1.12 var(--font);
+}
+
+.section-card__empty {
+  margin: 0;
+  color: var(--neutral-500);
+  font: 400 10px/1.12 var(--font);
+}
+
+/* Chips: one per comma-separated value; they wrap when a row fills up */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 8px;
+  border: 0.724px solid var(--neutral-700);
+  border-radius: var(--radius-pill);
+  color: var(--neutral-700);
+  font: 600 10px/1.12 var(--font);
+  letter-spacing: 0.1px;
+  white-space: nowrap;
+}
+
+.chips--sectors .chip {
+  font-weight: 500;
+}
+
+/* "Now Viewing" card (top left): hugs its content; clipped so the header/footer
+   backgrounds follow the card's rounded corners */
+.section-card.view-card {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  max-height: none;
+  overflow: hidden;
+}
+
+.view-card[hidden] {
+  display: none;
+}
+
+.view__header,
+.view-nav {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), var(--white) 50%);
+}
+
+.view__header {
+  padding: 8px 8px 0;
+}
+
+.view__now {
+  flex: 1 0 0;
+  min-width: 160px;
+  margin: 0;
+  padding: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--neutral-900);
+  color: var(--neutral-50);
+  font: 500 12px/1.24 var(--font);
+}
+
+/* Figma borders sit inside the shape, so padding is reduced by the 1px border */
+.view__back,
+.view-nav__button {
+  border: 1px solid var(--neutral-200);
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  color: var(--neutral-900);
+  font: 500 12px/1.24 var(--font);
+  cursor: pointer;
+}
+
+.view__back {
+  flex-shrink: 0;
+  padding: 7px 11px;
+}
+
+.view__back:hover,
+.view-nav__button:hover {
+  background: var(--grey-50);
+}
+
+.view__back:focus-visible,
+.view-nav__button:focus-visible {
+  outline: 2px solid var(--grey-500);
+  outline-offset: 2px;
+}
+
+.view__content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+}
+
+.view__studio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Directory number in a heavy outlined circle */
+.number-badge {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: solid var(--black);
+  border-radius: 50%;
+  color: var(--black);
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.number-badge--lg {
+  width: 42px;
+  height: 42px;
+  border-width: 3.15px;
+  font: 700 20px var(--font);
+  letter-spacing: -2.6px;
+  text-indent: -2.6px; /* re-centers: tracking leaves its space after the last digit */
+}
+
+.number-badge--sm {
+  width: 20px;
+  height: 20px;
+  border-width: 1.5px;
+  font: 600 10px var(--font);
+  letter-spacing: -1.6px;
+  text-indent: -1.6px;
+}
+
+.view__title {
+  display: flex;
+  flex: 1 0 0;
+  flex-direction: column;
+  min-width: 0;
+  color: var(--black);
+}
+
+.view__name {
+  margin: 0;
+  font: 600 16px/1.12 var(--font);
+}
+
+.view__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.view__est {
+  margin: 0;
+  font: 400 12px/1.12 var(--font);
+}
+
+.view__services {
+  margin: 0;
+  overflow: hidden;
+  font: 400 10px/1.12 var(--font);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Details line up with the name: 42px badge + 8px gap */
+.view__details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 50px;
+}
+
+.view__media {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Photo fills the width and keeps its own proportions; chips overlap its bottom by 8px.
+   map.js sets max-height so the card stops 12px above the bottom-left card; a taller
+   photo is cropped (centered) rather than stretched. */
+.view__photo {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: -8px;
+  border-radius: 12px;
+  background: var(--grey-50);
+  object-fit: cover;
+}
+
+/* No photo: placeholder at the Figma frame's proportion */
+.view__photo--empty {
+  aspect-ratio: 4096 / 2731;
+}
+
+.view__chips {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.view-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 5px 7px;
+  border: 1px solid var(--neutral-600);
+  border-radius: var(--radius-pill);
+  background: var(--neutral-50);
+  color: var(--neutral-600);
+  font: 500 10px/1.12 var(--font);
+  letter-spacing: 0.1px;
+  white-space: nowrap;
+}
+
+.view-chip__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 10px;
+  height: 10px;
+}
+
+.view__contact {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.view__address-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Up to 2 lines, hyphenated, then an ellipsis */
+.view__address {
+  display: -webkit-box;
+  flex: 1 0 0;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: var(--black);
+  font: 400 12px/1.12 var(--font);
+  hyphens: auto;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.view__map {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+}
+
+.view__links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.view__social {
+  display: flex;
+  flex-shrink: 0;
+  border-radius: 50%;
+  transition: opacity 0.15s ease;
+}
+
+a.view__map:hover,
+.view__social:hover {
+  opacity: 0.6;
+}
+
+.view__phone {
+  flex: 1 0 0;
+  min-width: 0;
+  margin: 0;
+  color: var(--black);
+  font: 400 12px/1.12 var(--font);
+  text-align: right;
+}
+
+.view-nav {
+  padding: 8px;
+}
+
+.view-nav__button {
+  display: flex;
+  flex: 1 0 0;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  padding: 5px;
+  text-align: left;
+}
+
+.view-nav__name {
+  flex: 1 0 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.view-nav__label {
+  color: var(--neutral-500);
+}
+
+/* About card (top right): studio profile for the active directory number */
+.section-card.about-card {
+  max-height: calc(100dvh - var(--nav-height) - 10px - 2 * var(--grid-margin));
+}
+
+.about-card[hidden] {
+  display: none;
+}
+
+.about {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+}
+
+.about__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.about__logo {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--grey-50);
+  object-fit: cover;
+}
+
+.about__name {
+  flex: 1 0 0;
+  min-width: 0;
+  margin: 0;
+  color: var(--black);
+  font: 600 16px/1.12 var(--font);
+}
+
+.about__est {
+  flex-shrink: 0;
+  margin: 0;
+  color: var(--black);
+  font: 400 12px/1.12 var(--font);
+  white-space: nowrap;
+}
+
+.about__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.about__about {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+/* Clamped to 6 lines until "Read More"; expanded, it hugs the full text */
+.about__text {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  color: var(--black);
+  font: 400 12px/1.12 var(--font);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 6;
+}
+
+.about--expanded .about__text {
+  display: block;
+  -webkit-line-clamp: unset;
+}
+
+.about__more {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--neutral-500);
+  font: 500 12px/1.12 var(--font);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.about__more:hover {
+  color: var(--neutral-900);
+}
+
+.about__more:focus-visible {
+  outline: 2px solid var(--grey-500);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.about__value {
+  margin: 0;
+  color: var(--black);
+  font: 600 16px/1.12 var(--font);
+}
+
+.about__keywords {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  padding-top: 8px;
+}
+
+.chips--keywords {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.chips--keywords .chip {
+  border-color: var(--neutral-500);
+  color: var(--neutral-500);
+  font-weight: 500;
+}
+
+.about__keywords-label {
+  flex: 1 0 auto;
+  margin: 0;
+  color: var(--neutral-500);
+  font: 500 12px/1.12 var(--font);
+  letter-spacing: 0.12px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Help icon with a tooltip (hover or keyboard focus), opening above it and
+   right-aligned so it stays inside the card */
+.about__help {
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  border-radius: 50%;
+  cursor: help;
+}
+
+.about__help:focus-visible {
+  outline: 2px solid var(--grey-500);
+  outline-offset: 2px;
+}
+
+.about__tooltip {
+  position: absolute;
+  right: -4px;
+  bottom: calc(100% + 8px);
+  z-index: 2;
+  width: 220px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: var(--neutral-900);
+  box-shadow: var(--shadow-card);
+  color: var(--neutral-50);
+  font: 400 11px/1.3 var(--font);
+  text-align: left;
+  white-space: normal;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(4px);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0s linear 0.15s;
+  pointer-events: none;
+}
+
+.about__help:hover .about__tooltip,
+.about__help:focus-visible .about__tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0s;
+}
+
+/* Founder card */
+.founder {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+}
+
+/* 1:1 crop of the founder photo; overflow is trimmed from the bottom and sides (top-center) */
+.founder__photo {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--grey-50);
+  object-fit: cover;
+  object-position: top center;
+}
+
+.founder__text {
+  display: flex;
+  flex: 1 0 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+.founder__name {
+  margin: 0;
+  color: var(--black);
+  font: 600 16px/1.12 var(--font);
+}
+
+.founder__role {
+  margin: 0;
+  color: var(--neutral-900);
+  font: 500 12px/1.24 var(--font);
+}
+
+.founder__linkedin {
+  display: flex;
+  flex-shrink: 0;
+  border-radius: 50%;
+  transition: opacity 0.15s ease;
+}
+
+.founder__linkedin:hover {
+  opacity: 0.7;
+}
+
+.founder__linkedin:focus-visible {
+  outline: 2px solid var(--grey-500);
+  outline-offset: 2px;
+}
+
+/* Website card: homepage preview in the 2880:1622 window-viewer; CTA overlaps its bottom edge by 13px */
+.website {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 12px;
+}
+
+.website__viewer {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2880 / 1622;
+  margin-bottom: -13px;
+  border: 1px solid #bebebe;
+  border-radius: 12px;
+  background: var(--grey-50);
+  object-fit: cover;
+  object-position: top center;
+}
+
+.website__viewer--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hugs short text; longer text stops at 4 lines, hyphenated, ending in an ellipsis */
+.section-card__desc {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  color: var(--neutral-700);
+  font: 400 10px/1.12 var(--font);
+  hyphens: auto;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+
+.section-card__desc:empty {
+  display: none;
+}
+
+/* Image fills the width and keeps its proportions; the CTA overlaps its bottom edge by 13px */
+.section-card__media {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.section-card__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: -13px;
+  border-radius: 12px;
+  background: var(--grey-50);
+}
+
+.section-card__media--no-image .section-card__cta {
+  margin-top: 0;
+}
+
+.section-card__cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--neutral-900);
+  color: var(--neutral-50);
+  font: 500 12px/1.24 var(--font);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+
+.section-card__cta:hover {
+  background: var(--black);
+}
+
+.section-card__cta:focus-visible {
+  outline: 2px solid var(--grey-500);
+  outline-offset: 2px;
+}
+
+@media (max-width: 1024px) {
+  .section-card {
+    grid-column: span 6;
+    max-height: calc(100dvh * 5 / 24);
+  }
+}
+
+@media (max-width: 640px) {
+  /* Phones: one row that scrolls sideways */
+  .directory-sections {
+    display: flex;
+    gap: var(--grid-gutter);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    pointer-events: auto;
+  }
+
+  .section-card {
+    flex: 0 0 80%;
+    scroll-snap-align: center;
+  }
+}
