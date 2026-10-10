@@ -191,14 +191,21 @@ const viewCard = document.querySelector(".view-card");
 // so all 60 are collected on the first load.
 const directoryIndex = new Map();
 
+// Seeded from the bundled dataset (js/directory-data.js) so the list and navigation work
+// before the map has loaded; the live Mapbox tileset replaces each entry once it renders.
+for (const { latitude, longitude, ...properties } of window.DIRECTORY_DATA ?? []) {
+  directoryIndex.set(properties.place_id, { properties, lngLat: { lng: longitude, lat: latitude } });
+}
+const fromTileset = new Set();
+
 function indexDirectoryFeatures() {
   if (!map.getLayer(DIRECTORY_LAYER)) return;
   for (const feature of map.queryRenderedFeatures({ layers: [DIRECTORY_LAYER] })) {
     const id = feature.properties.place_id;
-    if (!directoryIndex.has(id)) {
-      const [lng, lat] = feature.geometry.coordinates;
-      directoryIndex.set(id, { properties: feature.properties, lngLat: { lng, lat } });
-    }
+    if (fromTileset.has(id)) continue;
+    fromTileset.add(id);
+    const [lng, lat] = feature.geometry.coordinates;
+    directoryIndex.set(id, { properties: feature.properties, lngLat: { lng, lat } });
   }
 }
 
@@ -207,12 +214,14 @@ map.on("idle", indexDirectoryFeatures);
 // Idle-state list of every studio (top-left); a row opens that directory number
 const listCard = document.querySelector(".list-card");
 const directoryList = createDirectoryList(listCard, { onSelect: (placeId) => activateDirectory(placeId) });
-let listedCount = 0;
+let listedFromTileset = -1;
+const refreshList = () => directoryList.setEntries([...directoryIndex.values()].map((entry) => entry.properties));
+refreshList();
 
 map.on("idle", () => {
-  if (directoryIndex.size === listedCount) return;
-  listedCount = directoryIndex.size;
-  directoryList.setEntries([...directoryIndex.values()].map((entry) => entry.properties));
+  if (fromTileset.size === listedFromTileset) return;
+  listedFromTileset = fromTileset.size;
+  refreshList();
 });
 
 // Previous/next by place_id, wrapping around the ends

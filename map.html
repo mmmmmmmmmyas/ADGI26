@@ -4,6 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Map · Design Directory: BDO.</title>
+  <!-- Open connections early: map library, tiles/style, telemetry, fonts -->
+  <link rel="preconnect" href="https://api.mapbox.com" crossorigin>
+  <link rel="preconnect" href="https://events.mapbox.com" crossorigin>
+  <link rel="preload" href="https://api.mapbox.com/mapbox-gl-js/v3.32.0/mapbox-gl.js" as="script">
   <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.32.0/mapbox-gl.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -153,6 +157,7 @@
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.32.0/mapbox-gl.js"></script>
   <script src="js/config.js"></script>
   <script src="js/directory-assets.js"></script>
+  <script src="js/directory-data.js"></script>
   <script src="js/directory-services.js"></script>
   <script src="js/directory-sections.js"></script>
   <script src="js/image-viewer.js"></script>

@@ -20,7 +20,9 @@ function renderAsset(code, className, alt) {
   if (src.endsWith(".mp4")) {
     return `<video class="${className}" src="${escapeHtml(src)}" muted loop autoplay playsinline aria-label="${escapeHtml(alt)}"></video>`;
   }
-  return `<img class="${className}" src="${escapeHtml(src)}" alt="${escapeHtml(alt)}">`;
+  const full = window.DIRECTORY_ASSETS_FULL?.[code];
+  const fullAttr = full && full !== src ? ` data-full="${escapeHtml(full)}"` : "";
+  return `<img class="${className}" src="${escapeHtml(src)}"${fullAttr} alt="${escapeHtml(alt)}" decoding="async">`;
 }
 
 function renderProjectSection(props) {

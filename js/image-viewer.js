@@ -83,7 +83,8 @@
       applyView();
     };
     media.addEventListener(isVideo ? "loadedmetadata" : "load", ready, { once: true });
-    media.src = source.currentSrc || source.src;
+    // Cards show web-sized copies; the viewer opens the full-resolution original
+    media.src = source.dataset.full || source.currentSrc || source.src;
     if (!isVideo && media.complete) ready();
     viewer.showModal();
   }
