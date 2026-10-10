@@ -241,8 +241,31 @@ body {
   width: calc(var(--grid-col) * 2 + var(--grid-gutter));
 }
 
-.map-overlay__side > .about-card {
+.map-overlay__side > .about-card,
+.map-overlay__side > .stats-card {
   align-self: stretch;
+}
+
+/* Statistics card (right column, 3 columns): content to come */
+.stats-card[hidden] {
+  display: none;
+}
+
+.stats-card__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+}
+
+.stats-card__title {
+  margin: 0;
+  color: var(--black);
+  font: 600 16px/1.12 var(--font);
+}
+
+.stats-card__body {
+  min-height: calc(100dvh * 5 / 12);
 }
 
 .map-overlay__side > * {
@@ -909,6 +932,286 @@ body {
 
 .chips--sectors .chip {
   font-weight: 500;
+}
+
+/* Dropdown card (Figma "drop-down"; js/dropdown.js): opens 4px under its trigger,
+   at least as wide; scrolls past the space left above the bottom margin */
+.dropdown {
+  position: fixed;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 11px; /* 12px in Figma, less the 1px border */
+  overflow-y: auto;
+  border: 1px solid var(--neutral-200);
+  border-radius: 24px;
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+  list-style: none;
+  outline: none;
+}
+
+.dropdown[hidden] {
+  display: none;
+}
+
+.dropdown__option {
+  flex-shrink: 0;
+  padding: 4px 6px;
+  border-radius: 6px;
+  color: var(--neutral-900);
+  font: 500 12px/1.24 var(--font);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* Stroke between option groups (e.g. under "All Design Field") */
+.dropdown__divider {
+  flex-shrink: 0;
+  height: 1px;
+  margin: 2px 6px;
+  background: var(--neutral-200);
+}
+
+.dropdown__option.is-active {
+  background: var(--grey-50);
+}
+
+.dropdown__option[aria-selected="true"] {
+  font-weight: 600;
+}
+
+/* Directory list card (top left, idle state): fills the column down to the bottom margin;
+   the rows scroll, fading out under 16px edges as in Figma */
+.section-card.list-card {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  height: calc(100dvh - var(--nav-height) - 10px - 2 * var(--grid-margin));
+  max-height: none;
+  overflow: hidden;
+}
+
+.list-card[hidden] {
+  display: none;
+}
+
+.list__header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: stretch;
+  padding: 8px 8px 0;
+}
+
+/* Header pills: 1px border drawn inside the Figma size, so padding is reduced by it */
+.list__control {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  padding: 7px 11px;
+  border: 1px solid var(--neutral-200);
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  color: var(--neutral-900);
+  font: 500 12px/1.24 var(--font);
+  cursor: pointer;
+}
+
+.list__control:hover {
+  background: var(--grey-50);
+}
+
+.list__control--search-field:focus-within,
+.list__control--icon:focus-visible {
+  outline: 2px solid var(--grey-500);
+  outline-offset: -2px;
+}
+
+.list__control--grow {
+  flex: 1 0 0;
+}
+
+.list__control-text {
+  flex: 1 0 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list__arrow {
+  flex-shrink: 0;
+  margin: 0 2.65px;
+}
+
+/* The pill's trigger button covers the text + arrow; the clear (×) sits beside it */
+.list__control--select {
+  padding: 0;
+}
+
+.list__trigger {
+  display: flex;
+  flex: 1 0 0;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  height: 100%;
+  padding: 7px 11px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.list__trigger:focus-visible {
+  outline: 2px solid var(--grey-500);
+  outline-offset: -2px;
+}
+
+.list__control--select:has(.list__clear:not([hidden])) .list__trigger {
+  padding-right: 4px;
+}
+
+.list__control--select .list__clear {
+  margin-right: 11px;
+}
+
+/* Clear (×) for an active filter or sort */
+.list__clear {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+}
+
+.list__clear[hidden],
+.list__arrow[hidden] {
+  display: none;
+}
+
+.list__clear:hover {
+  opacity: 0.6;
+}
+
+.list__clear:focus-visible {
+  outline: 2px solid var(--grey-500);
+  outline-offset: 2px;
+}
+
+.list__control--icon {
+  flex-shrink: 0;
+  justify-content: center;
+  width: 38px;
+  padding: 0;
+}
+
+.list__icon-close,
+.list__control--search-field {
+  display: none;
+}
+
+/* Searching: the search field replaces the filter + sort pills; the icon becomes a close */
+.list__header.is-searching .list__control--select {
+  display: none;
+}
+
+.list__header.is-searching .list__control--search-field {
+  display: flex;
+  cursor: text;
+}
+
+.list__header.is-searching .list__icon-search {
+  display: none;
+}
+
+.list__header.is-searching .list__icon-close {
+  display: block;
+}
+
+.list__search {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: none;
+  color: var(--neutral-900);
+  font: 500 12px/1.24 var(--font);
+}
+
+.list__search::placeholder {
+  color: var(--neutral-500);
+}
+
+.list__items {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  margin: 0;
+  padding: 12px 8px 8px;
+  overflow-y: auto;
+  list-style: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
+}
+
+.list__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 22px;
+  background: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.list__row:hover {
+  background: var(--grey-50);
+}
+
+.list__row:focus-visible {
+  outline: 2px solid var(--grey-500);
+  outline-offset: 2px;
+}
+
+.list__row .view__name,
+.list__row .view__est,
+.list__row .view__services {
+  display: block;
+}
+
+/* Rows are a fixed 44px: names stay on one line, as in Figma */
+.list__row .view__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list__empty {
+  padding: 12px 4px;
+  color: var(--neutral-500);
+  font: 400 12px/1.12 var(--font);
 }
 
 /* "Now Viewing" card (top left): hugs its content; clipped so the header/footer

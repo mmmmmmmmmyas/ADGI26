@@ -12,17 +12,30 @@ const map = new mapboxgl.Map({
   minZoom: 11, // can't zoom out past city level
 });
 
-// Legend toggle (in the Creative Ecosystem pill) shows/hides the legend card
+// Right panel: the legend card and the statistics card share the space under the
+// top-right controls. Their toggles switch between them; only one shows at a time.
 const legend = document.querySelector(".legend");
 const legendToggle = document.querySelector(".legend-toggle");
+const statsCard = document.querySelector(".stats-card");
+const statsToggle = document.querySelector(".stats-toggle");
+const RIGHT_PANELS = {
+  legend: { card: legend, toggle: legendToggle, name: "legend" },
+  stats: { card: statsCard, toggle: statsToggle, name: "Creative Ecosystem statistics" },
+};
+let rightPanel = "legend";
 
-function setLegendVisible(visible) {
-  legend.hidden = !visible;
-  legendToggle.setAttribute("aria-expanded", String(visible));
-  legendToggle.setAttribute("aria-label", visible ? "Hide legend" : "Show legend");
+function setRightPanel(panel) {
+  rightPanel = panel;
+  for (const [key, { card, toggle, name }] of Object.entries(RIGHT_PANELS)) {
+    const shown = key === panel;
+    card.hidden = !shown;
+    toggle.setAttribute("aria-expanded", String(shown));
+    toggle.setAttribute("aria-label", `${shown ? "Hide" : "Show"} ${name}`);
+  }
 }
 
-legendToggle.addEventListener("click", () => setLegendVisible(legend.hidden));
+legendToggle.addEventListener("click", () => setRightPanel(rightPanel === "legend" ? null : "legend"));
+statsToggle.addEventListener("click", () => setRightPanel(rightPanel === "stats" ? null : "stats"));
 
 // Legend show/hide: each row toggles its Mapbox layer(s) listed in data-layers
 const EYE_ICONS = `
@@ -191,6 +204,17 @@ function indexDirectoryFeatures() {
 
 map.on("idle", indexDirectoryFeatures);
 
+// Idle-state list of every studio (top-left); a row opens that directory number
+const listCard = document.querySelector(".list-card");
+const directoryList = createDirectoryList(listCard, { onSelect: (placeId) => activateDirectory(placeId) });
+let listedCount = 0;
+
+map.on("idle", () => {
+  if (directoryIndex.size === listedCount) return;
+  listedCount = directoryIndex.size;
+  directoryList.setEntries([...directoryIndex.values()].map((entry) => entry.properties));
+});
+
 // Previous/next by place_id, wrapping around the ends
 function directoryNeighbors(placeId) {
   const ids = [...directoryIndex.keys()].sort((a, b) => a - b);
@@ -200,20 +224,21 @@ function directoryNeighbors(placeId) {
   return { _prev: pick(ids[(i - 1 + ids.length) % ids.length]), _next: pick(ids[(i + 1) % ids.length]) };
 }
 
-// The legend card makes way for the about card while a directory number is active.
-// It can still be opened with the legend toggle; closing the directory restores it.
-let legendVisibleBeforeDirectory = null;
+// The right panel (legend / statistics) makes way for the about card while a directory
+// number is active. Either can still be opened; closing the directory restores it.
+let rightPanelBeforeDirectory;
 
 function openDirectorySections(properties) {
-  if (legendVisibleBeforeDirectory === null) {
-    legendVisibleBeforeDirectory = !legend.hidden;
-    setLegendVisible(false);
+  if (rightPanelBeforeDirectory === undefined) {
+    rightPanelBeforeDirectory = rightPanel;
+    setRightPanel(null);
   }
   const props = { ...properties, ...directoryNeighbors(properties.place_id) };
   // Top cards update straight away. Rendering needs the about card visible so
   // "Read More" can measure the paragraph.
   aboutCard.hidden = false;
   viewCard.hidden = false;
+  listCard.hidden = true;
   renderDirectorySections(document.querySelector(".map-overlay"), props);
   [aboutCard, viewCard].forEach((card) => { card.scrollTop = 0; });
   loadBottomCards(props);
@@ -270,9 +295,10 @@ function closeDirectory() {
   hideBottomCards();
   aboutCard.hidden = true;
   viewCard.hidden = true;
-  if (legendVisibleBeforeDirectory !== null) {
-    setLegendVisible(legendVisibleBeforeDirectory);
-    legendVisibleBeforeDirectory = null;
+  listCard.hidden = false;
+  if (rightPanelBeforeDirectory !== undefined) {
+    setRightPanel(rightPanelBeforeDirectory);
+    rightPanelBeforeDirectory = undefined;
   }
 }
 
@@ -419,13 +445,17 @@ viewCard.addEventListener("click", (event) => {
     return;
   }
   const goto = event.target.closest("[data-goto]");
-  if (!goto) return;
-  const entry = directoryIndex.get(Number(goto.dataset.goto));
-  if (!entry) return;
-  setActiveDirectory(entry.properties.place_id, entry.lngLat);
+  if (goto) activateDirectory(Number(goto.dataset.goto));
+});
+
+// Open a directory number by place_id (list rows, previous/next)
+function activateDirectory(placeId) {
+  const entry = directoryIndex.get(placeId);
+  if (!entry || placeId === activePlaceId) return;
+  setActiveDirectory(placeId, entry.lngLat);
   openDirectorySections(entry.properties);
   flyToDirectory(entry.lngLat);
-});
+}
 
 // POI cards: the other legend categories (not directory numbers or Design Agency & Firm)
 // open a small card stacked over the clicked icon. The card's icon center sits on the

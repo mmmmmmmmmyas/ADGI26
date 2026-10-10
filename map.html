@@ -49,6 +49,36 @@
           </svg>
           </a>
         </nav>
+        <section class="section-card list-card" aria-label="Directory list">
+          <div class="list__header">
+            <div class="list__control list__control--grow list__control--select">
+              <button class="list__trigger" type="button" data-list="field">
+                <span class="list__control-text" data-list="field-text">All Design Field</span>
+                <img class="list__arrow" src="assets/icons/ic-arrow-down.svg" width="6.707" height="3.6465" alt="">
+              </button>
+              <button class="list__clear" type="button" data-list="field-clear" aria-label="Clear design field filter" hidden>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#191919" stroke-width="1.2" stroke-linecap="round" aria-hidden="true"><path d="M3 3l6 6M9 3l-6 6"/></svg>
+              </button>
+            </div>
+            <div class="list__control list__control--grow list__control--select">
+              <button class="list__trigger" type="button" data-list="sort">
+                <span class="list__control-text" data-list="sort-text">Sort by: 1 - 60</span>
+                <img class="list__arrow" src="assets/icons/ic-arrow-down.svg" width="6.707" height="3.6465" alt="">
+              </button>
+              <button class="list__clear" type="button" data-list="sort-clear" aria-label="Reset sort to 1 - 60" hidden>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#191919" stroke-width="1.2" stroke-linecap="round" aria-hidden="true"><path d="M3 3l6 6M9 3l-6 6"/></svg>
+              </button>
+            </div>
+            <label class="list__control list__control--grow list__control--search-field">
+              <input class="list__search" type="search" data-list="search" placeholder="Search studio name" aria-label="Search studio name">
+            </label>
+            <button class="list__control list__control--icon" type="button" data-list="search-toggle" aria-expanded="false" aria-label="Search studios">
+              <img class="list__icon-search" src="assets/icons/ic-search.svg" width="12.016" height="12.016" alt="">
+              <svg class="list__icon-close" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#191919" stroke-width="1.2" stroke-linecap="round" aria-hidden="true"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7"/></svg>
+            </button>
+          </div>
+          <ul class="list__items"></ul>
+        </section>
         <article class="section-card view-card" data-section="view" aria-label="Now viewing" hidden></article>
       </div>
 
@@ -60,7 +90,7 @@
           </button>
         </div>
         <div class="control-pill control-pill--icons">
-          <button class="chip-button" type="button" data-modal="modal-stats" aria-haspopup="dialog" aria-label="Creative Ecosystem statistics">
+          <button class="chip-button stats-toggle" type="button" aria-expanded="false" aria-controls="stats-card" aria-label="Show Creative Ecosystem statistics">
             <img src="assets/icons/ic-chart.svg" width="22" height="22" alt="">
           </button>
           <button class="chip-button legend-toggle" type="button" aria-expanded="true" aria-controls="map-legend" aria-label="Hide legend">
@@ -75,6 +105,13 @@
       </div>
 
       <article class="section-card about-card" data-section="about" aria-label="Studio profile" hidden></article>
+
+      <section class="section-card stats-card" id="stats-card" aria-labelledby="stats-card-title" hidden>
+        <div class="stats-card__inner">
+          <h2 class="stats-card__title" id="stats-card-title">Creative Ecosystem Statistics</h2>
+          <div class="stats-card__body"></div>
+        </div>
+      </section>
 
       <aside class="legend" id="map-legend" aria-label="Map legend">
         <ul class="legend__list" id="legend-list">
@@ -111,15 +148,6 @@
       <div class="modal__body"></div>
     </dialog>
 
-    <dialog class="modal" id="modal-stats" aria-labelledby="modal-stats-title">
-      <header class="modal__header">
-        <h2 class="modal__title" id="modal-stats-title">Creative Ecosystem Statistics</h2>
-        <button class="control-chip modal__close" type="button" aria-label="Close">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7"/></svg>
-        </button>
-      </header>
-      <div class="modal__body"></div>
-    </dialog>
   </main>
 
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.32.0/mapbox-gl.js"></script>
@@ -128,6 +156,8 @@
   <script src="js/directory-services.js"></script>
   <script src="js/directory-sections.js"></script>
   <script src="js/image-viewer.js"></script>
+  <script src="js/dropdown.js"></script>
+  <script src="js/directory-list.js"></script>
   <script src="js/map.js"></script>
 </body>
 </html>

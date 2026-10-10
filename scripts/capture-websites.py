@@ -27,9 +27,9 @@ CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 # Sites whose homepage doesn't capture usefully (error pages, login walls, blank loaders).
 # They show the grey globe empty state instead and are never captured.
-NO_PREVIEW = {"3", "4", "5", "7", "18", "29", "31", "38", "59"}
+NO_PREVIEW = {"3", "31"}
 # Screenshots supplied by hand; never overwritten by this script.
-MANUAL = {"14", "16", "17", "19", "30", "39", "42", "45", "46", "48", "57", "60"}
+MANUAL = {"4", "5", "7", "14", "16", "17", "18", "19", "29", "30", "38", "39", "42", "45", "46", "48", "57", "59", "60"}
 
 VIEWPORT = (1440, 811)  # 2880:1622
 OUTPUT_WIDTH = 800      # ~2.5x the card's image width, for sharp retina display
