@@ -1850,3 +1850,78 @@ a.view__map:hover,
     scroll-snap-align: center;
   }
 }
+
+/* Mobile notice: phones (under 768px wide) get a full-screen white notice instead of
+   the map; tablets and desktops see the site as usual */
+.mobile-notice {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobile-notice {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: var(--grid-margin);
+    background: var(--white);
+    text-align: center;
+  }
+
+  .mobile-notice__logo {
+    display: block;
+    width: 190px;
+    height: auto;
+  }
+
+  .mobile-notice__text {
+    max-width: 280px;
+    margin: 0;
+    color: var(--neutral-900);
+    font: 500 14px/1.4 var(--font);
+  }
+
+  /* Nothing behind the notice should scroll or take focus */
+  body:has(.mobile-notice) {
+    overflow: hidden;
+  }
+
+  body > :not(.mobile-notice):not(script) {
+    visibility: hidden;
+  }
+}
+
+/* Long-form text in modals (About): brand font, centered column and text,
+   section titles in the title style (as the modal title) */
+.prose {
+  color: var(--neutral-900);
+  font: 400 14px/1.55 var(--font);
+  text-align: center;
+}
+
+.prose > :first-child {
+  margin-top: 0;
+}
+
+.prose > :last-child {
+  margin-bottom: 0;
+}
+
+.prose h3 {
+  margin: 32px auto 12px;
+  color: var(--black);
+  font: 600 16px/1.12 var(--font);
+}
+
+.prose p {
+  max-width: 68ch;
+  margin: 0 auto 12px;
+}
+
+.prose strong {
+  font: 600 14px/1.55 var(--font);
+}

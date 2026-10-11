@@ -15,6 +15,11 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <!-- Phones: the map isn't laid out for small screens yet, so show a notice instead -->
+  <div class="mobile-notice" role="dialog" aria-modal="true" aria-labelledby="mobile-notice-text">
+    <img class="mobile-notice__logo" src="assets/brand/logo.svg" width="190" height="48" alt="Design Directory: BDO.">
+    <p class="mobile-notice__text" id="mobile-notice-text">For Best User Experience Please Visit Design Directory Bandung in Desktop or Tab Device</p>
+  </div>
   <main class="map-page">
     <div id="basemap" aria-label="Map of Bandung"></div>
 
@@ -103,7 +108,7 @@
           </button>
         </div>
         <div class="control-pill control-pill--icons">
-          <button class="chip-button" type="button" data-modal="modal-about" aria-haspopup="dialog" aria-label="About Creative Ecosystem">
+          <button class="chip-button" type="button" data-modal="modal-about" aria-haspopup="dialog" aria-label="About Design Directory: Bandung">
             <img src="assets/icons/ic-info.svg" width="22" height="22" alt="">
           </button>
         </div>
@@ -145,12 +150,23 @@
     </section>
     <dialog class="modal" id="modal-about" aria-labelledby="modal-about-title">
       <header class="modal__header">
-        <h2 class="modal__title" id="modal-about-title">About Creative Ecosystem</h2>
+        <h2 class="modal__title" id="modal-about-title">Design Directory: Bandung</h2>
         <button class="control-chip modal__close" type="button" aria-label="Close">
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7"/></svg>
         </button>
       </header>
-      <div class="modal__body"></div>
+      <div class="modal__body prose">
+        <h3>Context</h3>
+        <p>Bandung is known as a creative city, and graphic and visual communication design is one of the practices behind that reputation. The people and studios doing the work, however, are often reached through personal introductions and word of mouth rather than through any shared, visible reference. Design Directory: Bandung responds to this by gathering 60 design agencies and studios into one mapped record, showing each one’s location and profile within the wider creative ecosystem of Bandung Creative City.</p>
+        <p>The directory treats the design community as a network instead of a list. Practitioners, associations, and communities appear together, so that readers at any stage can see where they sit in it and who is nearby. This includes students, freelancers, newly formed studios, and long-established agencies. It is conceived as a practical, open reference that makes the city’s design networks easy to see and easy to enter.</p>
+        <p>It is presented as a map, in print and digital form, with symbology designed specifically for it. Presenting the information spatially shows what a plain list cannot: where studios cluster, how they relate to one another, and how they connect to the surrounding ecosystem.</p>
+
+        <h3>Usage</h3>
+        <p><strong>Finding the right studio.</strong> Anyone looking to commission work, find a collaborator, or approach a studio for an internship or a job can locate it on the map, read its profile, and see which other studios are close by.</p>
+        <p><strong>Seeing the landscape.</strong> Students and early-career designers can use the map to understand the local scene before choosing where to apply, learn, or reach out. Established studios can see who works nearby and in related areas, which makes new partnerships and cross-disciplinary projects easier to start.</p>
+        <p><strong>Connecting the community.</strong> Associations and community groups can use the directory as a shared reference for outreach, events, and building relationships across different levels of experience, skill, and education.</p>
+        <p><strong>Serving as a common reference.</strong> Educators, researchers, institutions, and visitors can use it as an entry point to the city’s design scene. Because it is available in print and digital form, it can be browsed on a wall or a table or consulted on a screen.</p>
+      </div>
     </dialog>
 
   </main>
