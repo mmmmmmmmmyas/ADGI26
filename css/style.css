@@ -189,6 +189,10 @@ body {
   text-decoration: none;
 }
 
+.map-nav [hidden] {
+  display: none;
+}
+
 .map-nav__home:hover {
   background: var(--grey-50);
 }

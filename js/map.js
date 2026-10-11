@@ -9,6 +9,8 @@ const map = new mapboxgl.Map({
   style,
   center: BANDUNG,
   zoom: 12,
+  bearing: 17.9, // horizontal rotation, degrees clockwise from north
+  pitch: 57, // vertical tilt, degrees from straight down
   minZoom: 11, // can't zoom out past city level
 });
 
