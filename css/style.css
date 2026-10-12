@@ -41,11 +41,18 @@
   --nav-height: 44px;
   --nav-inset: 8px; /* space between a pill's edge and the chips inside it */
 
+  /* UI scale: tablets keep the desktop layout, scaled to 75% (media query at the end).
+     Inside scaled elements vw/dvh shrink with them, so the layout uses --app-w / --app-h:
+     the screen size in the scaled element's own units. */
+  --ui-scale: 1;
+  --app-w: calc(100vw / var(--ui-scale));
+  --app-h: calc(100dvh / var(--ui-scale));
+
   /* 12-column grid */
   --grid-columns: 12;
   --grid-margin: 24px;
   --grid-gutter: 12px;
-  --grid-col: calc((100vw - 2 * var(--grid-margin) - (var(--grid-columns) - 1) * var(--grid-gutter)) / var(--grid-columns));
+  --grid-col: calc((var(--app-w) - 2 * var(--grid-margin) - (var(--grid-columns) - 1) * var(--grid-gutter)) / var(--grid-columns));
 }
 
 *,
@@ -269,33 +276,11 @@ body {
 }
 
 .stats-card__body {
-  min-height: calc(100dvh * 5 / 12);
+  min-height: calc(var(--app-h) * 5 / 12);
 }
 
 .map-overlay__side > * {
   pointer-events: auto;
-}
-
-@media (max-width: 1024px) {
-  .map-overlay__side {
-    grid-column: 7 / span 6;
-  }
-
-  .map-overlay__side > .legend {
-    width: calc(var(--grid-col) * 4 + var(--grid-gutter) * 3);
-  }
-}
-
-@media (max-width: 640px) {
-  .map-overlay__left {
-    grid-column: 1 / -1;
-  }
-
-  .map-overlay__side {
-    grid-row: 2;
-    grid-column: 6 / span 7;
-    margin-top: var(--grid-gutter);
-  }
 }
 
 /* Map controls row: icon pills side by side with no gap */
@@ -405,8 +390,8 @@ body {
 /* Modal: 8 grid columns wide, centered on the page */
 .modal {
   width: calc(var(--grid-col) * 8 + var(--grid-gutter) * 7);
-  max-width: calc(100vw - 2 * var(--grid-margin));
-  max-height: calc(100dvh - 2 * var(--grid-margin));
+  max-width: calc(var(--app-w) - 2 * var(--grid-margin));
+  max-height: calc(var(--app-h) - 2 * var(--grid-margin));
   margin: auto;
   padding: 0;
   overflow: hidden;
@@ -443,7 +428,7 @@ body {
 
 /* Empty for now; keeps the modal at a readable size until content arrives */
 .modal__body {
-  min-height: calc(100dvh * 5 / 12);
+  min-height: calc(var(--app-h) * 5 / 12);
   overflow-y: auto;
   padding: 24px;
 }
@@ -583,6 +568,8 @@ body {
   position: relative;
   width: 100%;
   height: 100%;
+  scale: var(--ui-scale); /* 75% on tablets, around the anchor's center */
+  transform-origin: center;
   transition: opacity var(--popup-duration) var(--popup-ease-in);
 }
 
@@ -858,9 +845,13 @@ body {
 
 .section-card {
   grid-column: span 3;
-  max-height: calc(100dvh * 5 / 12);
+  max-height: calc(var(--app-h) * 5 / 12);
+  /* Content scrolls vertically only. Sideways gestures pass through to whatever holds the
+     card (e.g. the swipeable bottom row on portrait tablets). */
+  overflow-x: hidden;
   overflow-y: auto;
-  overscroll-behavior: contain;
+  overscroll-behavior-x: auto;
+  overscroll-behavior-y: contain;
   border: 1px solid var(--neutral-100);
   border-radius: 26px;
   background: var(--white);
@@ -993,7 +984,7 @@ body {
   display: flex;
   flex-direction: column;
   align-self: stretch;
-  height: calc(100dvh - var(--nav-height) - 10px - 2 * var(--grid-margin));
+  height: calc(var(--app-h) - var(--nav-height) - 10px - 2 * var(--grid-margin));
   max-height: none;
   overflow: hidden;
 }
@@ -1511,7 +1502,7 @@ a.view__map:hover,
 
 /* About card (top right): studio profile for the active directory number */
 .section-card.about-card {
-  max-height: calc(100dvh - var(--nav-height) - 10px - 2 * var(--grid-margin));
+  max-height: calc(var(--app-h) - var(--nav-height) - 10px - 2 * var(--grid-margin));
 }
 
 .about-card[hidden] {
@@ -1615,6 +1606,7 @@ a.view__map:hover,
 
 .about__keywords {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 4px;
   width: 100%;
@@ -1634,6 +1626,7 @@ a.view__map:hover,
 
 .about__keywords-label {
   flex: 1 0 auto;
+  margin-left: auto;
   margin: 0;
   color: var(--neutral-500);
   font: 500 12px/1.12 var(--font);
@@ -1828,29 +1821,6 @@ a.view__map:hover,
   outline-offset: 2px;
 }
 
-@media (max-width: 1024px) {
-  .section-card {
-    grid-column: span 6;
-    max-height: calc(100dvh * 5 / 24);
-  }
-}
-
-@media (max-width: 640px) {
-  /* Phones: one row that scrolls sideways */
-  .directory-sections {
-    display: flex;
-    gap: var(--grid-gutter);
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    pointer-events: auto;
-  }
-
-  .section-card {
-    flex: 0 0 80%;
-    scroll-snap-align: center;
-  }
-}
-
 /* Mobile notice: phones (under 768px wide) get a full-screen white notice instead of
    the map; tablets and desktops see the site as usual */
 .mobile-notice {
@@ -1924,4 +1894,70 @@ a.view__map:hover,
 
 .prose strong {
   font: 600 14px/1.55 var(--font);
+}
+
+/* Landscape tablets (768-1279px): the desktop layout, with every interface layer scaled to 75%.
+   The map itself and the markers on it stay at full size. */
+@media (min-width: 768px) and (max-width: 1279px) {
+  :root {
+    --ui-scale: 0.75;
+  }
+}
+
+/* Portrait tablets stay at full size: 75% is too small to read in a narrow column */
+@media (min-width: 768px) and (max-width: 1279px) and (orientation: portrait) {
+  :root {
+    --ui-scale: 1;
+  }
+}
+
+.map-overlay,
+.directory-sections,
+.modal,
+.dropdown {
+  zoom: var(--ui-scale);
+}
+
+/* Portrait tablets: the studio profile card joins the bottom row as its first card
+   (moved there by map.js); the row of five 3-column cards scrolls sideways. */
+@media (min-width: 768px) and (max-width: 1279px) and (orientation: portrait) {
+  .directory-sections {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--grid-gutter);
+    padding-inline: var(--grid-margin);
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: var(--grid-margin);
+    scrollbar-width: none;
+  }
+
+  .directory-sections::-webkit-scrollbar {
+    display: none;
+  }
+
+  .directory-sections > .section-card {
+    flex: 0 0 calc(var(--grid-col) * 4 + var(--grid-gutter) * 3);
+    scroll-snap-align: start;
+  }
+
+  /* map.js sets max-height so it stops below the Now Viewing card; content scrolls */
+  .directory-sections > .about-card {
+    overflow-y: auto;
+  }
+
+  /* Left column (logo, directory list / Now Viewing) matches the 4-column bottom cards */
+  .map-overlay__left {
+    grid-column: 1 / span 4;
+  }
+
+  /* Narrow cards: let the "Now Viewing" pill shrink so Back still fits, and use
+     the card's full width for the details instead of indenting them under the name */
+  .view__now {
+    min-width: 0;
+  }
+
+  .view__details {
+    padding-left: 0;
+  }
 }

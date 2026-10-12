@@ -436,14 +436,56 @@ function fitViewPhoto() {
   const photo = viewCard.querySelector(".view__photo");
   if (!photo || viewCard.hidden || directorySections.hidden) return;
   photo.style.maxHeight = "";
-  const gutter = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--grid-gutter")) || 12;
+  // Portrait tablets: the Now Viewing card hugs its photo and limits the profile card instead
+  if (portraitTablet.matches) {
+    fitAboutCardBelowView();
+    return;
+  }
+  // getBoundingClientRect gives screen pixels; CSS values (gutter, transform, max-height)
+  // are in the cards' own pixels, drawn at --ui-scale (75% on tablets). Work in screen
+  // pixels, then convert the result back.
+  const root = getComputedStyle(document.documentElement);
+  const scale = parseFloat(root.getPropertyValue("--ui-scale")) || 1;
+  const gutter = (parseFloat(root.getPropertyValue("--grid-gutter")) || 12) * scale;
   const card = viewCard.getBoundingClientRect();
   const rest = card.height - photo.getBoundingClientRect().height;
-  // Use the card's resting position, ignoring its float-up entrance offset
-  const shiftY = new DOMMatrixReadOnly(getComputedStyle(websiteCard).transform).m42;
+  // Use the website card's resting position, ignoring its float-up entrance offset
+  const shiftY = new DOMMatrixReadOnly(getComputedStyle(websiteCard).transform).m42 * scale;
   const limit = websiteCard.getBoundingClientRect().top - shiftY - gutter;
-  photo.style.maxHeight = `${Math.max(0, Math.floor(limit - card.top - rest))}px`;
+  photo.style.maxHeight = `${Math.max(0, Math.floor((limit - card.top - rest) / scale))}px`;
 }
+
+// Portrait tablets: the studio profile card (top right on desktop) becomes the first card of
+// the bottom row, which then scrolls sideways. Its height stops a gutter below the
+// Now Viewing card, and its content scrolls.
+const portraitTablet = window.matchMedia("(min-width: 768px) and (max-width: 1279px) and (orientation: portrait)");
+const aboutCardHome = { parent: aboutCard.parentElement, next: aboutCard.nextElementSibling };
+
+function placeAboutCard() {
+  if (portraitTablet.matches) {
+    directorySections.prepend(aboutCard);
+  } else {
+    aboutCardHome.parent.insertBefore(aboutCard, aboutCardHome.next);
+    aboutCard.style.maxHeight = "";
+  }
+  fitViewPhoto();
+}
+
+function fitAboutCardBelowView() {
+  if (aboutCard.hidden || viewCard.hidden) return;
+  const root = getComputedStyle(document.documentElement);
+  const scale = parseFloat(root.getPropertyValue("--ui-scale")) || 1;
+  const margin = parseFloat(root.getPropertyValue("--grid-margin")) || 24;
+  const gutter = parseFloat(root.getPropertyValue("--grid-gutter")) || 12;
+  // Screen pixels -> the cards' own (scaled) pixels
+  const viewBottom = viewCard.getBoundingClientRect().bottom / scale;
+  const screenBottom = innerHeight / scale - margin;
+  aboutCard.style.maxHeight = `${Math.max(120, Math.floor(screenBottom - viewBottom - gutter))}px`;
+}
+
+portraitTablet.addEventListener("change", placeAboutCard);
+placeAboutCard();
+new ResizeObserver(() => { if (portraitTablet.matches) fitAboutCardBelowView(); }).observe(viewCard);
 
 viewCard.addEventListener("load", fitViewPhoto, true); // photo finished loading (capture: load doesn't bubble)
 new ResizeObserver(fitViewPhoto).observe(websiteCard);

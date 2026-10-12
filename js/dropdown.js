@@ -39,12 +39,15 @@ function createDropdown(trigger, { label, options, value, onChange, maxHeight = 
     card.setAttribute("aria-activedescendant", items[activeIndex].id);
   }
 
+  // Screen measurements are in real pixels; the card is drawn at --ui-scale (75% on
+  // tablets), so its CSS pixels are converted back before use.
   function position() {
+    const scale = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--ui-scale")) || 1;
     const rect = trigger.getBoundingClientRect();
-    card.style.left = `${rect.left}px`;
-    card.style.top = `${rect.bottom + 4}px`;
-    card.style.minWidth = `${rect.width}px`;
-    card.style.maxHeight = `${Math.min(maxHeight, Math.max(120, innerHeight - rect.bottom - 4 - 24))}px`;
+    card.style.left = `${rect.left / scale}px`;
+    card.style.top = `${(rect.bottom + 4 * scale) / scale}px`;
+    card.style.minWidth = `${rect.width / scale}px`;
+    card.style.maxHeight = `${Math.min(maxHeight, Math.max(120, (innerHeight - rect.bottom) / scale - 4 - 24))}px`;
   }
 
   function open() {
