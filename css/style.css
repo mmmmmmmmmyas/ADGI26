@@ -1365,6 +1365,17 @@ body {
   white-space: nowrap;
 }
 
+/* Rows are at least 44px, so the three lines never get squeezed; the last line keeps
+   room for descenders (g, y) that its ellipsis clipping would otherwise cut */
+.list__row {
+  height: auto;
+  min-height: 44px;
+}
+
+.list__row .view__services {
+  padding-bottom: 0.15em;
+}
+
 .list__empty {
   padding: 12px 4px;
   color: var(--neutral-500);
@@ -2063,6 +2074,13 @@ a.view__map:hover,
 @media (min-width: 768px) and (max-width: 1279px) {
   :root {
     --ui-scale: 0.75;
+  }
+}
+
+/* Landscape tablets: more breathing room between directory list rows at 75% */
+@media (min-width: 768px) and (max-width: 1279px) and (orientation: landscape) {
+  .list__items {
+    gap: 12px;
   }
 }
 
