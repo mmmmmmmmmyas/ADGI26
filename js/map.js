@@ -39,6 +39,10 @@ function setRightPanel(panel) {
 legendToggle.addEventListener("click", () => setRightPanel(rightPanel === "legend" ? null : "legend"));
 statsToggle.addEventListener("click", () => setRightPanel(rightPanel === "stats" ? null : "stats"));
 
+// The statistics card is still in progress: deployments hide its control (showStats: false
+// in the generated config.js); a local config.js without the flag keeps it available.
+if (window.MAPBOX_CONFIG?.showStats === false) statsToggle.hidden = true;
+
 // Legend show/hide: each row toggles its Mapbox layer(s) listed in data-layers
 const EYE_ICONS = `
   <svg class="legend__eye-on" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6s1.8-3.5 5-3.5S11 6 11 6s-1.8 3.5-5 3.5S1 6 1 6Z"/><circle cx="6" cy="6" r="1.5"/></svg>
@@ -217,7 +221,12 @@ map.on("idle", indexDirectoryFeatures);
 const listCard = document.querySelector(".list-card");
 const directoryList = createDirectoryList(listCard, { onSelect: (placeId) => activateDirectory(placeId) });
 let listedFromTileset = -1;
-const refreshList = () => directoryList.setEntries([...directoryIndex.values()].map((entry) => entry.properties));
+const statsBody = document.querySelector('[data-stats="founding"]');
+const refreshList = () => {
+  const studios = [...directoryIndex.values()].map((entry) => entry.properties);
+  directoryList.setEntries(studios);
+  renderFoundingHistogram(statsBody, studios);
+};
 refreshList();
 
 map.on("idle", () => {

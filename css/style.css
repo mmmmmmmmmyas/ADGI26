@@ -252,12 +252,18 @@ body {
   width: calc(var(--grid-col) * 2 + var(--grid-gutter));
 }
 
-.map-overlay__side > .about-card,
-.map-overlay__side > .stats-card {
+.map-overlay__side > .about-card {
   align-self: stretch;
 }
 
-/* Statistics card (right column, 3 columns): content to come */
+/* Statistics card: 4 columns wide (wider than the 3-column side column, so it extends
+   left from the right margin), as tall as its content up to the bottom margin */
+.section-card.stats-card {
+  align-self: flex-end;
+  width: calc(var(--grid-col) * 4 + var(--grid-gutter) * 3);
+  max-height: calc(var(--app-h) - var(--nav-height) - 10px - 2 * var(--grid-margin));
+}
+
 .stats-card[hidden] {
   display: none;
 }
@@ -265,8 +271,14 @@ body {
 .stats-card__inner {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 16px;
   padding: 12px;
+}
+
+.stats-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .stats-card__title {
@@ -275,8 +287,154 @@ body {
   font: 600 16px/1.12 var(--font);
 }
 
-.stats-card__body {
-  min-height: calc(var(--app-h) * 5 / 12);
+.stats-card__subtitle {
+  margin: 0;
+  color: var(--neutral-500);
+  font: 400 12px/1.24 var(--font);
+}
+
+/* Histogram (js/directory-stats.js): one column per founding year; each studio is one
+   stacked icon. Icons shrink with the column so all 18 years fit any card width. */
+.histogram {
+  margin: 0;
+}
+
+.histogram__caption {
+  margin-bottom: 12px;
+}
+
+.histogram__title {
+  margin: 0;
+  color: var(--black);
+  font: 600 14px/1.12 var(--font);
+}
+
+.histogram__note {
+  margin: 2px 0 0;
+  color: var(--neutral-500);
+  font: 400 10px/1.12 var(--font);
+}
+
+.histogram__plot {
+  --cols: 18;
+  --icon: min(16px, calc((100% - (var(--cols) - 1) * 2px) / var(--cols)));
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  align-items: end;
+  gap: 2px;
+  border-bottom: 1px solid var(--neutral-200);
+}
+
+.histogram__column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+  min-width: 0;
+  height: 100%;
+  padding: 0 0 4px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  cursor: default;
+}
+
+.histogram__column.is-active,
+.histogram__column:hover {
+  background: var(--grey-50);
+}
+
+.histogram__column:focus-visible {
+  outline: 2px solid var(--grey-500);
+  outline-offset: 1px;
+}
+
+.histogram__count {
+  min-height: 1.12em;
+  color: var(--neutral-900);
+  font: 600 10px/1.12 var(--font);
+}
+
+/* The bar behind each stack: 1% opacity, as specified */
+.histogram__bar {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+  padding: 2px 0;
+  border-radius: 4px 4px 0 0;
+  background: rgba(25, 25, 25, 0.01);
+}
+
+.histogram__bar:empty,
+.histogram__bar[style*="--n: 0"] {
+  padding: 0;
+}
+
+.histogram__icon {
+  display: block;
+  width: 100%;
+  max-width: 16px;
+  height: auto;
+  aspect-ratio: 1;
+}
+
+/* Year labels read bottom-to-top so all 18 fit; a fixed height (fits "< 2010") keeps
+   every bar on the same baseline */
+.histogram__year {
+  flex-shrink: 0;
+  height: 48px;
+  margin-top: 4px;
+  text-align: end;
+  color: var(--neutral-500);
+  font: 500 10px/1 var(--font);
+  white-space: nowrap;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+.histogram__tooltip {
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  width: max-content;
+  max-width: min(240px, 100%);
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: var(--neutral-900);
+  box-shadow: var(--shadow-card);
+  color: var(--neutral-50);
+  font: 400 11px/1.35 var(--font);
+  pointer-events: none;
+}
+
+.histogram__tooltip[hidden] {
+  display: none;
+}
+
+.histogram__tooltip-title {
+  margin: 0 0 4px;
+  font-weight: 600;
+}
+
+.histogram__tooltip ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.histogram__tooltip-id {
+  display: inline-block;
+  min-width: 18px;
+  color: var(--grey-500);
+}
+
+.histogram__tooltip-empty {
+  margin: 0;
+  color: var(--grey-500);
 }
 
 .map-overlay__side > * {
@@ -335,6 +493,10 @@ body {
   background: none;
   cursor: pointer;
   transition: opacity 0.15s ease;
+}
+
+.chip-button[hidden] {
+  display: none;
 }
 
 .chip-button:hover {

@@ -12,6 +12,10 @@ if (!token.startsWith("pk.")) {
   process.exit(1);
 }
 
+// Features still in progress stay hidden on the deployed site unless switched on here
+// (Vercel → Settings → Environment Variables). Locally, js/config.js leaves them visible.
+const showStats = process.env.SHOW_STATS === "true";
+
 const out = path.join(__dirname, "..", "js", "config.js");
-fs.writeFileSync(out, `// Generated at build time by scripts/write-config.js.\nwindow.MAPBOX_CONFIG = ${JSON.stringify({ accessToken: token, style }, null, 2)};\n`);
+fs.writeFileSync(out, `// Generated at build time by scripts/write-config.js.\nwindow.MAPBOX_CONFIG = ${JSON.stringify({ accessToken: token, style, showStats }, null, 2)};\n`);
 console.log(`Wrote ${path.relative(process.cwd(), out)} (style ${style})`);
