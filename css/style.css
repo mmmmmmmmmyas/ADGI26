@@ -144,6 +144,285 @@ body {
   line-height: 1;
 }
 
+/* Landing page (home.html) */
+html:has(body.landing) {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:has(body.landing) {
+    scroll-behavior: auto;
+  }
+}
+
+/* Top nav, fixed over the page: section links on the left, Data Disclaimer on the right,
+   and the logo always centred on the page (equal side columns, whatever their content) */
+.landing-nav {
+  position: fixed;
+  top: var(--grid-margin);
+  right: var(--grid-margin);
+  left: var(--grid-margin);
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  pointer-events: none;
+}
+
+.landing-nav > :first-child {
+  justify-self: start;
+}
+
+.landing-nav > :last-child {
+  justify-self: end;
+}
+
+.landing-nav > * {
+  pointer-events: auto;
+}
+
+.landing-nav__pill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 44px;
+  padding: 0 calc(16px - 1.128px);
+  border: 1.128px solid var(--neutral-900);
+  border-radius: var(--radius-pill);
+  background: none; /* outline only: no fill, no shadow */
+  color: var(--neutral-900);
+  font: 600 16px/1.24 var(--font);
+  white-space: nowrap;
+}
+
+.landing-nav__pill a {
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.landing-nav__pill a:hover,
+.landing-nav__disclaimer:hover {
+  opacity: 0.6;
+}
+
+.landing-nav__disclaimer {
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.landing-nav__pill a:focus-visible,
+.landing-nav__disclaimer:focus-visible,
+.landing-nav__logo:focus-visible {
+  outline: 2px solid var(--grey-500);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Logo: the only element with a shadow; hover turns it red and it links to the map
+   (shares .map-nav__logo / .brand-logo styles with the map page) */
+.landing-nav__logo .brand-logo {
+  filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.12));
+}
+
+/* Centre square: holds the Hollow Cube, 1:1, fixed just below the middle of the screen while
+   the page scrolls. It covers all page content (sections sit beneath it); only the top and
+   bottom navs and modals stay above. */
+.landing-square {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 5;
+  /* 1.5 × the 5-column width so the cube has room to spread while scrolling without being
+     clipped; the cube's zoom is divided by the same 1.5 so it looks the same size at rest */
+  width: calc(((100vw - 2 * var(--grid-margin) - 11 * var(--grid-gutter)) / 12 * 5 + 4 * var(--grid-gutter)) * 1.5);
+  aspect-ratio: 1;
+  transform: translate(-50%, calc(-50% + 20px)); /* 20pt below centre */
+  pointer-events: none;
+}
+
+.landing-main {
+  position: relative;
+  z-index: 1;
+  padding-bottom: 80px; /* space under the last section at the very bottom of the page */
+}
+
+/* Soft grey glow (Figma "texture": 1440×236 at y 580 of a 900px screen). Full viewport width,
+   a quarter of Figma's height, its bottom edge 34px below the screen, behind the page content so it
+   never hides text. */
+.landing-texture {
+  position: fixed;
+  right: 0;
+  bottom: -34px;
+  left: 0;
+  z-index: 0;
+  height: 59px; /* a quarter of Figma's 236px */
+  border-radius: 110px;
+  background: #d8d8d8; /* Figma #F0F0F0 darkened 10% */
+  filter: blur(49.5px);
+  pointer-events: none;
+}
+
+/* Bottom nav, fixed to the bottom margin: credits on the left, partner mark on the right */
+.landing-footer {
+  position: fixed;
+  right: var(--grid-margin);
+  bottom: var(--grid-margin);
+  left: var(--grid-margin);
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr; /* keeps the CTA at the true centre */
+  align-items: end;
+  pointer-events: none;
+}
+
+.landing-footer > :first-child {
+  justify-self: start;
+}
+
+.landing-footer > :last-child {
+  justify-self: end;
+}
+
+/* "Visit Directory" CTA: dark pill, red on hover (as the logo), shadow turns red with it.
+   Padding is Figma's 12/20/12/32 grown so the pill is 12% larger (181×46 → 203×52)
+   while the font and icon keep their size. */
+.landing-cta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 14.76px 28.36px 14.76px 45.37px;
+  border-radius: var(--radius-pill);
+  background: var(--neutral-700);
+  color: var(--white);
+  font: 500 16px/1 var(--font);
+  white-space: nowrap;
+  text-decoration: none;
+  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.18)); /* Figma 12% black, 50% stronger */
+  pointer-events: auto;
+  transition: background-color 0.15s ease, filter 0.15s ease;
+}
+
+.landing-cta:hover,
+.landing-cta:focus-visible {
+  background: #ff0000;
+  filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.18));
+}
+
+.landing-cta:focus-visible {
+  outline: 2px solid var(--grey-500);
+  outline-offset: 2px;
+}
+
+.landing-cta__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+}
+
+.landing-cta__icon img {
+  display: block;
+  transform: rotate(-90deg);
+}
+
+.landing-footer__credits {
+  display: flex;
+  align-items: center;
+  gap: 43px;
+  margin: 0;
+  color: var(--neutral-900);
+  font: 500 16px/1.12 var(--font);
+  letter-spacing: -0.16px;
+  white-space: nowrap;
+}
+
+.landing-footer__partner {
+  display: block;
+}
+
+/* Sections: each a full screen tall; anchor jumps stop below the fixed nav */
+.landing-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  min-height: 100dvh;
+  padding: calc(var(--grid-margin) * 2 + 44px) var(--grid-margin) calc(var(--grid-margin) * 2 + 18px);
+  scroll-margin-top: 0;
+}
+
+/* Hero statement: medium, centred, a 6-column text box whose centre sits 140px above
+   the middle of the screen. Width uses 100vw directly: the landing page is never scaled. */
+.landing-section--intro {
+  position: relative;
+}
+
+.landing-hero__text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc((100vw - 2 * var(--grid-margin) - 11 * var(--grid-gutter)) / 12 * 6 + 5 * var(--grid-gutter));
+  margin: 0;
+  color: var(--neutral-900);
+  font: 500 40px/1.12 var(--font);
+  text-align: center;
+  transform: translate(-50%, calc(-50% - 140px));
+}
+
+/* Intro text (Figma "text-a"): columns 4-9 of the 12-column grid, 800px tall; two 3-column
+   blocks, the first at the top and the second at the bottom */
+.landing-section--text {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--grid-gutter);
+  align-content: center;
+}
+
+.landing-text {
+  display: grid;
+  grid-column: 4 / 10;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--grid-gutter);
+  height: 800px;
+  color: var(--neutral-900);
+  font: 500 24px/1.12 var(--font);
+  letter-spacing: -0.24px;
+}
+
+.landing-text__block:last-child {
+  align-self: end;
+}
+
+.landing-text p {
+  margin: 0;
+}
+
+.landing-text p + p {
+  margin-top: 1.12em; /* one empty line between paragraphs */
+}
+
+.landing-section + .landing-section {
+  border-top: 1px solid var(--neutral-100);
+}
+
+/* Full-screen modal (e.g. Data Disclaimer) */
+.modal.modal--full {
+  width: var(--app-w); /* full screen even when modals are scaled on tablets */
+  max-width: none;
+  height: var(--app-h);
+  max-height: none;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+.modal--full .modal__body {
+  flex: 1 1 auto;
+}
+
 /* Map */
 .map-page {
   position: relative;
@@ -2067,6 +2346,18 @@ a.view__map:hover,
 
 .prose strong {
   font: 600 14px/1.55 var(--font);
+}
+
+/* Lists (Data Disclaimer): centered like the paragraphs, no bullets */
+.prose ul {
+  max-width: 68ch;
+  margin: 0 auto 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.prose a {
+  color: inherit;
 }
 
 /* Landscape tablets (768-1279px): the desktop layout, with every interface layer scaled to 75%.
