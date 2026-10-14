@@ -208,7 +208,6 @@ function renderViewSection(props) {
   return `
     <div class="view__header">
       <p class="view__now">Now Viewing</p>
-      <button class="view__back" type="button" data-action="back">Back</button>
     </div>
     <div class="view__content">
       <div class="view__studio">

@@ -467,6 +467,7 @@ html:has(body.landing) {
 
 /* Left column: logo pill above the "Now Viewing" card (3 columns) */
 .map-overlay__left {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -479,13 +480,25 @@ html:has(body.landing) {
   pointer-events: auto;
 }
 
-/* Top-left nav: home pill | "Map View" pill | logo, side by side with no gap */
+/* Top-left nav: the logo (links to the landing page) */
 .map-nav {
   display: flex;
   align-items: center;
 }
 
-.control-pill.map-nav__home,
+/* Back (reset map) pill: outside the top-left card, 4px to its right, level with its top edge.
+   The card spans the full column, so 100% of the column is the card's right edge.
+   Only shown while a studio's detail view ("Now Viewing" card) is open. */
+.map-reset-pill {
+  position: absolute;
+  top: calc(var(--nav-height) + 10px); /* nav + the column's 10px gap = the card's top */
+  left: calc(100% + 4px);
+}
+
+.map-overlay__left:has(.view-card[hidden]) .map-reset-pill {
+  display: none;
+}
+
 .control-pill.map-nav__title {
   padding: 0 calc(16px - var(--pill-border));
   text-decoration: none;
@@ -493,10 +506,6 @@ html:has(body.landing) {
 
 .map-nav [hidden] {
   display: none;
-}
-
-.map-nav__home:hover {
-  background: var(--grey-50);
 }
 
 .map-nav__title {
@@ -526,7 +535,6 @@ html:has(body.landing) {
   fill: #ff0000;
 }
 
-.map-nav__home:focus-visible,
 .map-nav__logo:focus-visible {
   outline: 2px solid var(--grey-500);
   outline-offset: 2px;
@@ -1715,7 +1723,6 @@ html:has(body.landing) {
 }
 
 /* Figma borders sit inside the shape, so padding is reduced by the 1px border */
-.view__back,
 .view-nav__button {
   border: 1px solid var(--neutral-200);
   border-radius: var(--radius-pill);
@@ -1725,17 +1732,10 @@ html:has(body.landing) {
   cursor: pointer;
 }
 
-.view__back {
-  flex-shrink: 0;
-  padding: 7px 11px;
-}
-
-.view__back:hover,
 .view-nav__button:hover {
   background: var(--grey-50);
 }
 
-.view__back:focus-visible,
 .view-nav__button:focus-visible {
   outline: 2px solid var(--grey-500);
   outline-offset: 2px;

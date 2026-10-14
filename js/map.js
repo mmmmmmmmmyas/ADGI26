@@ -4,13 +4,18 @@ const { accessToken, style } = window.MAPBOX_CONFIG;
 
 mapboxgl.accessToken = accessToken;
 
-const map = new mapboxgl.Map({
-  container: "basemap",
-  style,
+// Starting view; the back control in the top-left nav returns here
+const INITIAL_CAMERA = {
   center: BANDUNG,
   zoom: 12,
   bearing: 17.9, // horizontal rotation, degrees clockwise from north
   pitch: 57, // vertical tilt, degrees from straight down
+};
+
+const map = new mapboxgl.Map({
+  container: "basemap",
+  style,
+  ...INITIAL_CAMERA,
   minZoom: 11, // can't zoom out past city level
 });
 
@@ -500,12 +505,8 @@ viewCard.addEventListener("load", fitViewPhoto, true); // photo finished loading
 new ResizeObserver(fitViewPhoto).observe(websiteCard);
 window.addEventListener("resize", fitViewPhoto);
 
-// "Now Viewing" card: Back returns to idle; previous/next fly to that directory number
+// "Now Viewing" card: previous/next fly to that directory number
 viewCard.addEventListener("click", (event) => {
-  if (event.target.closest('[data-action="back"]')) {
-    closeDirectory();
-    return;
-  }
   const goto = event.target.closest("[data-goto]");
   if (goto) activateDirectory(Number(goto.dataset.goto));
 });
@@ -585,6 +586,18 @@ document.addEventListener("keydown", (event) => {
   if (event.key !== "Escape" || document.querySelector("dialog[open]")) return;
   closeDirectory();
   closePoiCard();
+});
+
+// Back control (top-left nav): returns the map to how it first loads. Closes the selected
+// studio and any POI card, shows every legend layer and the legend card, flies to the start view.
+document.querySelector(".map-reset").addEventListener("click", () => {
+  closeDirectory();
+  closePoiCard();
+  legendItems.forEach((item) => setLegendItem(item, true));
+  savedLegendState = null;
+  syncEcosystemToggle();
+  setRightPanel("legend");
+  map.flyTo({ ...INITIAL_CAMERA, essential: true });
 });
 
 // Modals: chart and info controls open them; close via the X, Esc, or a click on the backdrop

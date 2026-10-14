@@ -26,10 +26,7 @@
     <div class="map-overlay grid">
       <div class="map-overlay__left">
         <nav class="map-nav" aria-label="Site">
-          <!-- Home page hidden for now: Home + "Map View" pills kept but not shown -->
-          <a class="control-pill map-nav__home" href="home.html" aria-label="Home" hidden>
-            <img src="assets/icons/ic-home.svg" width="22" height="21.7337" alt="">
-          </a>
+          <!-- "Map View" pill hidden for now -->
           <span class="control-pill map-nav__title" hidden>Map View</span>
           <a class="map-nav__logo" href="home.html" aria-label="Design Directory: BDO. — landing page">
             <!-- Inline copy of assets/brand/logo.svg so CSS can recolour it on hover -->
@@ -59,6 +56,13 @@
           </svg>
           </a>
         </nav>
+        <!-- Back: resets the map to how it first loads; floats beside the card's top-right corner,
+             shown only while a studio's detail view is open (css) -->
+        <div class="control-pill control-pill--icons map-reset-pill">
+          <button class="chip-button map-reset" type="button" aria-label="Reset map">
+            <img src="assets/icons/ic-back.svg" width="22" height="22" alt="">
+          </button>
+        </div>
         <section class="section-card list-card" aria-label="Directory list">
           <div class="list__header">
             <div class="list__control list__control--grow list__control--select">
