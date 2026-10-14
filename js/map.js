@@ -588,9 +588,12 @@ document.addEventListener("keydown", (event) => {
   closePoiCard();
 });
 
-// Back control (top-left nav): returns the map to how it first loads. Closes the selected
-// studio and any POI card, shows every legend layer and the legend card, flies to the start view.
-document.querySelector(".map-reset").addEventListener("click", () => {
+// Back (beside the detail card): closes the detail view only; the camera stays where it is
+document.querySelector(".map-back").addEventListener("click", closeDirectory);
+
+// Logo: returns the map to how it first loads. Closes the selected studio and any POI card,
+// shows every legend layer and the legend card, flies to the start view.
+document.querySelector(".map-nav__logo").addEventListener("click", () => {
   closeDirectory();
   closePoiCard();
   legendItems.forEach((item) => setLegendItem(item, true));

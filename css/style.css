@@ -480,22 +480,22 @@ html:has(body.landing) {
   pointer-events: auto;
 }
 
-/* Top-left nav: the logo (links to the landing page) */
+/* Top-left nav: the logo (a button that resets the map) */
 .map-nav {
   display: flex;
   align-items: center;
 }
 
-/* Back (reset map) pill: outside the top-left card, 4px to its right, level with its top edge.
+/* Back (close detail view) pill: outside the top-left card, 4px to its right, level with its top edge.
    The card spans the full column, so 100% of the column is the card's right edge.
    Only shown while a studio's detail view ("Now Viewing" card) is open. */
-.map-reset-pill {
+.map-back-pill {
   position: absolute;
   top: calc(var(--nav-height) + 10px); /* nav + the column's 10px gap = the card's top */
   left: calc(100% + 4px);
 }
 
-.map-overlay__left:has(.view-card[hidden]) .map-reset-pill {
+.map-overlay__left:has(.view-card[hidden]) .map-back-pill {
   display: none;
 }
 
@@ -517,7 +517,11 @@ html:has(body.landing) {
 /* Logo: the registered SVG at nav height; its three dark shapes turn #FF0000 on hover */
 .map-nav__logo {
   display: flex;
+  padding: 0;
+  border: 0;
   border-radius: var(--radius-pill);
+  background: none;
+  cursor: pointer;
 }
 
 .brand-logo {
