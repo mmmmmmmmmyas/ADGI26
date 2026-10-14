@@ -247,6 +247,22 @@ html:has(body.landing) {
   padding-bottom: 80px; /* space under the last section at the very bottom of the page */
 }
 
+/* Loading screen: full white, the logo (nav size) centred; fades out once the cube is ready */
+.landing-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: var(--white);
+  transition: opacity 0.4s ease, visibility 0.4s;
+}
+
+.landing-loader.is-done {
+  visibility: hidden;
+  opacity: 0;
+}
+
 /* Soft grey glow (Figma "texture": 1440×236 at y 580 of a 900px screen). Full viewport width,
    a quarter of Figma's height, its bottom edge 34px below the screen, behind the page content so it
    never hides text. */
