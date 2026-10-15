@@ -142,6 +142,63 @@
         </div>
       </div>
     </section>
+
+    <!-- Symbology (Figma "legends-row"): the nine legend icons in one column, centred -->
+    <section class="landing-section landing-section--symbology" id="symbology" aria-label="Symbology">
+      <ul class="landing-symbology">
+        <li><img src="assets/symbology/sym-design.svg" width="100.519" height="100.519" alt="Design Agency &amp; Firm"></li>
+        <li><img src="assets/symbology/sym-digital.svg" width="100.519" height="100.519" alt="Digital &amp; Software House"></li>
+        <li><img src="assets/symbology/sym-photo.svg" width="100.519" height="100.519" alt="Photo Studio"></li>
+        <li><img src="assets/symbology/sym-print.svg" width="100.519" height="100.519" alt="Printing"></li>
+        <li><img src="assets/symbology/sym-gallery.svg" width="100.519" height="100.519" alt="Gallery &amp; Spaces"></li>
+        <li><img src="assets/symbology/sym-supply.svg" width="100.519" height="100.519" alt="Art Suppliers"></li>
+        <li><img src="assets/symbology/sym-park.svg" width="100.519" height="100.519" alt="Park"></li>
+        <li><img src="assets/symbology/sym-hub.svg" width="100.519" height="100.519" alt="Hub &amp; Co-Working Area"></li>
+        <li><img src="assets/symbology/sym-museum.svg" width="100.519" height="100.519" alt="Museum"></li>
+      </ul>
+
+      <!-- Design approach (Figma "text-a" 377:477): 8 columns, stays at the centre of the screen
+           while the section scrolls; the icons pass under its arrow -->
+      <div class="landing-approach">
+        <div class="landing-approach__col">
+          <div class="landing-approach__chips">
+            <span class="landing-chip">Visual Branding</span>
+            <span class="landing-chip">Icon Design</span>
+          </div>
+          <div class="landing-approach__text">
+            <h2 class="landing-approach__title">Graphic Design</h2>
+            <p>Brand expression sits in the system, not in individual symbols. Every symbol shares the same construction, with the same grid, stroke weight, corner radius, and visual weight, so the set reads as one visual language.</p>
+          </div>
+        </div>
+        <!-- Arrow (Figma "Vector 159"): a 2px line the width of its column with the arrowhead at its
+             tip; it draws itself as the reader scrolls (--draw, 0-1, set below) -->
+        <div class="landing-approach__arrow" aria-hidden="true">
+          <div class="approach-arrow">
+            <span class="approach-arrow__line"></span>
+            <svg class="approach-arrow__head" width="8.367" height="14.7279" viewBox="287.3 0 8.367 14.7279" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M295.374 8.07107C295.764 7.68054 295.764 7.04738 295.374 6.65685L289.01 0.292893C288.619 -0.097631 287.986 -0.097631 287.596 0.292893C287.205 0.683418 287.205 1.31658 287.596 1.70711L293.252 7.36396L287.596 13.0208C287.205 13.4113 287.205 14.0445 287.596 14.435C287.986 14.8256 288.619 14.8256 289.01 14.435L295.374 8.07107Z" fill="black"/></svg>
+          </div>
+        </div>
+        <div class="landing-approach__col">
+          <div class="landing-approach__chips">
+            <span class="landing-chip">Cartography</span>
+          </div>
+          <div class="landing-approach__text">
+            <h2 class="landing-approach__title">Symbology</h2>
+            <p>Forms are kept schematic, with one or two defining features and metaphors familiar to the design community, so they read as readily for students and enthusiasts as for practitioners.</p>
+            <p>Symbols are told apart by silhouette first and by color second, so the map stays legible in grayscale print and for readers with color-vision differences.</p>
+          </div>
+          <button class="landing-cta landing-cta--approach" type="button" data-modal="modal-approach" aria-haspopup="dialog">
+            Design Approach
+            <span class="landing-cta__icon" aria-hidden="true"><img src="assets/icons/ic-arrow-reg.svg" width="12.2962" height="6.68525" alt=""></span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Closing statement (Figma "closing-statement" 378:538): 8 columns, centred, 300px top/bottom -->
+    <section class="landing-section landing-section--closing" id="closing" aria-label="Closing statement">
+      <p class="landing-closing">Built as a Practical, Open Reference, Design Directory Bandung Brings Practitioners, Students, Associations, &amp; Communities Into a One Shared View.</p>
+    </section>
   </main>
 
   <!-- Soft grey glow behind the bottom of the screen (Figma "texture") -->
@@ -161,14 +218,15 @@
     <img class="landing-footer__partner" src="assets/brand/braga-technologies.svg" width="149" height="16.1352" alt="Braga Technologies">
   </footer>
 
-  <dialog class="modal modal--full" id="modal-disclaimer" aria-labelledby="modal-disclaimer-title">
-    <header class="modal__header">
-      <h2 class="modal__title" id="modal-disclaimer-title">Data Disclaimer, and Privacy Policy</h2>
+  <!-- Modals: 8 columns wide, as the About modal on the map page -->
+  <dialog class="modal" id="modal-disclaimer" aria-labelledby="modal-disclaimer-title">
+    <header class="modal__header modal__header--close-only">
       <button class="control-chip modal__close" type="button" aria-label="Close">
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7"/></svg>
       </button>
     </header>
     <div class="modal__body prose">
+      <h2 class="modal__heading" id="modal-disclaimer-title">Data Disclaimer, and Privacy Policy</h2>
       <p><strong>Who we are:</strong> Braga Technologies organizes exhibitions that connect the public with relevant companies, organizations, products, and services. Our approach follows Indonesia’s Personal Data Protection Law (UU PDP No. 27/2022).</p>
 
       <h3>1. What we display</h3>
@@ -193,22 +251,123 @@
       <h3>6. Your rights</h3>
       <p>You can ask to see, correct, restrict, or delete your information, object to its use, or withdraw consent at any time.</p>
 
-      <h3>7. Consent letter</h3>
-      <p>Signing confirms you have read the policy and agree to the use of your data for the exhibition only. It is not blanket permission. Photos and video need separate, clear consent, and any new use of your data requires new consent.</p>
+      <h3>7. Consent</h3>
+      <p>Your data is used for the exhibition only. Consent for one use is not blanket permission: photos and video need separate, clear consent, and any new use of your data requires new consent.</p>
 
       <h3>8. Contact</h3>
-      <p>M. Yasin Abdillah, <a href="mailto:yasinabdillah@braga.co.id?subject=Koreksi%20Informasi%20Direktori%20Desain%20Bandung%202026">yasinabdillah@braga.co.id</a>. Use the subject line “Koreksi Informasi Direktori Desain Bandung 2026.”</p>
+      <p>For anything about your information or this directory, whether you need more information, want something changed, or want it removed, contact M. Yasin Abdillah at <a href="mailto:yasinabdillah@braga.co.id">yasinabdillah@braga.co.id</a>.</p>
+      <p>If your request is specifically about correcting the content shown in the directory, use the subject line <a href="mailto:yasinabdillah@braga.co.id?subject=Koreksi%20Informasi%20Direktori%20Desain%20Bandung%202026">“Koreksi Informasi Direktori Desain Bandung 2026”</a>.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="modal-approach" aria-labelledby="modal-approach-title">
+    <header class="modal__header modal__header--close-only">
+      <button class="control-chip modal__close" type="button" aria-label="Close">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7"/></svg>
+      </button>
+    </header>
+    <div class="modal__body approach">
+      <h2 class="modal__heading" id="modal-approach-title">Design Approach</h2>
+      <p class="approach__intro">A map symbol has to work as a piece of cartography and as a piece of visual identity. The sections below describe how we designed the symbology to do both, for an audience of design professionals, students, and enthusiasts.</p>
+      <!-- Five cards (Figma 378:539), 2 columns -->
+      <ol class="approach__cards">
+        <li class="approach-card">
+          <div class="approach-card__chips">
+            <span class="landing-chip approach-card__num">01</span>
+            <span class="landing-chip">Brand Expression</span>
+          </div>
+          <div class="approach-card__text">
+            <h3 class="approach-card__title">Brand expression through a shared visual grammar</h3>
+            <p>Rather than giving each symbol its own character, we defined one set of construction rules (grid, stroke weight, corner treatment, visual weight, and viewpoint) and drew every symbol within it. The brand expression comes from this consistency. The set reads as a single visual language and the map is recognizable as a whole, while each symbol stays simple enough to read at a glance.</p>
+          </div>
+        </li>
+        <li class="approach-card">
+          <div class="approach-card__chips">
+            <span class="landing-chip approach-card__num">02</span>
+            <span class="landing-chip">Silhouette First</span>
+          </div>
+          <div class="approach-card__text">
+            <h3 class="approach-card__title">Silhouette first, color second</h3>
+            <p>Each symbol was designed to be told apart by its outline alone. Color was added afterward as a supporting cue instead of the carrier of meaning, and we checked the set in grayscale. The map therefore holds up in black-and-white print and for readers with color-vision differences.</p>
+          </div>
+        </li>
+        <li class="approach-card">
+          <div class="approach-card__chips">
+            <span class="landing-chip approach-card__num">03</span>
+            <span class="landing-chip">Grid &amp; Final Size</span>
+          </div>
+          <div class="approach-card__text">
+            <h3 class="approach-card__title">Built on a grid, tested at final size</h3>
+            <p>Symbols were constructed on a fixed grid, with consistent stroke weights and minimum internal gaps so fine details don’t close up when small. Instead of drawing large and scaling down, we reviewed each symbol at the size it actually appears on the map, in print and digital, and simplified wherever detail was lost.</p>
+          </div>
+        </li>
+        <li class="approach-card">
+          <div class="approach-card__chips">
+            <span class="landing-chip approach-card__num">04</span>
+            <span class="landing-chip">Clarity First</span>
+          </div>
+          <div class="approach-card__text">
+            <h3 class="approach-card__title">Clarity over insider knowledge</h3>
+            <p>The audience spans professionals, students, and enthusiasts, so the symbols avoid references that only experienced designers would recognize. Each one is reduced to one or two defining features and built on metaphors familiar from design culture and everyday life, so it can be understood at first glance whatever the reader’s experience.</p>
+          </div>
+        </li>
+        <li class="approach-card">
+          <div class="approach-card__chips">
+            <span class="landing-chip approach-card__num">05</span>
+            <span class="landing-chip">Legend as Design</span>
+          </div>
+          <div class="approach-card__text">
+            <h3 class="approach-card__title">The legend as part of the design</h3>
+            <p>A symbol rarely explains itself completely, so the legend was designed as part of the map and not added at the end. It names each category in plain words, so readers can check what a symbol means instead of guessing.</p>
+          </div>
+        </li>
+      </ol>
     </div>
   </dialog>
 
   <script>
-    // Data Disclaimer: open the full-screen modal; close with the X, Esc or the backdrop
+    // Modals (Data Disclaimer, Design Approach): close with the X, Esc or a click on the backdrop
     document.querySelectorAll("[data-modal]").forEach((button) => {
       button.addEventListener("click", () => document.getElementById(button.dataset.modal).showModal());
     });
     document.querySelectorAll(".modal").forEach((modal) => {
       modal.querySelector(".modal__close").addEventListener("click", () => modal.close());
+      modal.addEventListener("click", (event) => {
+        if (event.target === modal) modal.close(); // the dialog itself is only hit outside its content
+      });
     });
+
+    // Design approach block: its height sets the sticky offset that keeps it centred on screen
+    const approach = document.querySelector(".landing-approach");
+    new ResizeObserver(() => approach.style.setProperty("--approach-h", `${approach.offsetHeight}px`)).observe(approach);
+
+    // ...and it builds up as the middle of the screen moves through the Symbology section:
+    // "Graphic Design" fades in at 1/4, the arrow then draws itself from 1/4 to 3/4, and
+    // "Symbology" fades in at 3/4. Nothing goes back while scrolling up within the section (the
+    // arrow keeps its furthest length); everything resets only when the middle of the screen goes
+    // back above the top of the section.
+    const symbology = document.getElementById("symbology");
+    const [graphicCol, symbologyCol] = approach.querySelectorAll(".landing-approach__col");
+    const approachSteps = [{ col: graphicCol, at: 1 / 4 }, { col: symbologyCol, at: 3 / 4 }];
+    const arrow = approach.querySelector(".approach-arrow");
+    let arrowDraw = 0;
+    let approachFrame = 0;
+    const updateApproach = () => {
+      approachFrame = 0;
+      const rect = symbology.getBoundingClientRect();
+      const progress = (innerHeight / 2 - rect.top) / rect.height;
+      for (const { col, at } of approachSteps) {
+        if (progress >= at) col.classList.remove("is-hidden");
+        else if (progress < 0) col.classList.add("is-hidden");
+      }
+      arrowDraw = progress < 0 ? 0 : Math.max(arrowDraw, Math.min(1, (progress - 1 / 4) / (1 / 2)));
+      arrow.style.setProperty("--draw", arrowDraw);
+      arrow.classList.toggle("is-drawn", arrowDraw > 0);
+    };
+    approachSteps.forEach(({ col }) => col.classList.add("is-hidden"));
+    updateApproach();
+    addEventListener("scroll", () => { approachFrame ||= requestAnimationFrame(updateApproach); }, { passive: true });
+    addEventListener("resize", updateApproach);
   </script>
 
   <script type="module">
@@ -220,6 +379,24 @@
       scrollLayerGap: 80, // default 60pt + 20pt
     });
     cube.ready.then(() => window.landingAssetsReady?.()); // lets the loading screen close
+
+    // While the Symbology section covers the middle of the screen: the cube shrinks to 70% (css),
+    // its icons grow 30%, its number circles grow 40% and turn red, and its collages and maps fade out.
+    // Everything eases back when the section leaves.
+    const square = document.querySelector(".landing-square");
+    const base = cube.getSettings();
+    const SYMBOLOGY_LOOK = {
+      iconScale: base.iconScale * 1.3,
+      numberScale: base.numberScale * 1.4,
+      numberColor: "#ff0000",
+      collageOpacity: 0,
+      mapOpacity: 0,
+    };
+    const NORMAL_LOOK = Object.fromEntries(Object.keys(SYMBOLOGY_LOOK).map((key) => [key, base[key]]));
+    new IntersectionObserver(([entry]) => {
+      square.classList.toggle("is-small", entry.isIntersecting);
+      cube.transitionTo(entry.isIntersecting ? SYMBOLOGY_LOOK : NORMAL_LOOK);
+    }, { rootMargin: "-50% 0px -50% 0px" }).observe(document.getElementById("symbology"));
 
     // Tuning panel only with ?controls (e.g. home.html?controls)
     if (new URLSearchParams(location.search).has("controls")) {

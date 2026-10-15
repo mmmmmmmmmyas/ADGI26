@@ -23,6 +23,10 @@ export const DEFAULTS = {
   layerGap: 26,              // pt between stacked layers at rest
   scrollLayerGap: 60,        // pt between layers while scrolling
   zoom: 1,                   // 0.5 (far) – 3 (close)
+  numberScale: 1,            // × circular number size
+  numberColor: '#000000',    // circular number ink
+  collageOpacity: 1,         // 0–1
+  mapOpacity: 1,             // 0–1 (fades the multiplied maps toward white)
   scrollTrigger: 'page',     // 'page' = page scroll speed | 'wheel' = mouse wheel | 'none'
   assetsBase: new URL('../assets/', import.meta.url).href,
 };
@@ -54,6 +58,8 @@ export function mountHollowCube(container, options = {}) {
     surfaceColor: o.surfaceColor, surfaceOpacity: o.surfaceOpacity, surfacesVisible: o.surfacesVisible,
     gridsVisible: o.gridsVisible, iconScale: o.iconScale, spinSpeed: o.spinSpeed, tilt: o.tilt,
     layerGap: o.layerGap, scrollLayerGap: o.scrollLayerGap, zoom: o.zoom,
+    numberScale: o.numberScale, numberColor: o.numberColor, collageOpacity: o.collageOpacity,
+    mapOpacity: o.mapOpacity,
   };
 
   // Host Grotesk for the circular numbers (added once if the page doesn't already load it)
@@ -168,7 +174,7 @@ export function mountHollowCube(container, options = {}) {
       if (!t) return;
       prepTex(t);
       const aspect = t.image.width / t.image.height;
-      const m = new THREE.Mesh(new THREE.PlaneGeometry(1.12 * S * aspect, 1.12 * S), flatMat({ name: 'collage', map: t }));
+      const m = new THREE.Mesh(new THREE.PlaneGeometry(1.12 * S * aspect, 1.12 * S), flatMat({ name: 'collage', map: t, opacity: state.collageOpacity }));
       m.name = 'collage_' + 'abcd'[i];
       collages.push(m);
     });
@@ -177,6 +183,7 @@ export function mountHollowCube(container, options = {}) {
 
   /* --- MAPS: 4 shuffled across 4 walls, fill 2 cols × 3 rows (left or right), multiply blend --- */
   const maps = [];
+  const mapFade = { value: state.mapOpacity }; // shared shader uniform for every map
   const randomizeMaps = () => {
     shuffle(maps).forEach((m, i) => {
       const w = walls[i]; if (!w) return;
@@ -193,8 +200,17 @@ export function mountHollowCube(container, options = {}) {
       const aspect = t.image.width / t.image.height; // cover-crop to 2:3
       if (aspect > ratio) { t.repeat.set(ratio / aspect, 1); t.offset.set((1 - ratio / aspect) / 2, 0); }
       else { t.repeat.set(1, aspect / ratio); t.offset.set(0, (1 - aspect / ratio) / 2); }
-      const m = new THREE.Mesh(new THREE.PlaneGeometry(W, H),
-        flatMat({ name: 'map', map: t, blending: THREE.MultiplyBlending, premultipliedAlpha: true }));
+      const mat = flatMat({ name: 'map', map: t, blending: THREE.MultiplyBlending, premultipliedAlpha: true });
+      // Multiply blending can't fade with opacity (it would darken), so mapOpacity mixes the
+      // map toward white instead: multiplying by white leaves what's behind unchanged.
+      mat.onBeforeCompile = (shader) => {
+        shader.uniforms.mapFade = mapFade;
+        shader.fragmentShader = 'uniform float mapFade;\n' + shader.fragmentShader.replace(
+          '#include <premultiplied_alpha_fragment>',
+          'gl_FragColor.rgb = mix(vec3(1.0), gl_FragColor.rgb, mapFade);\n#include <premultiplied_alpha_fragment>');
+      };
+      const m = new THREE.Mesh(new THREE.PlaneGeometry(W, H), mat);
+      m.visible = state.mapOpacity > 0;
       m.name = 'map_' + 'abcd'[i];
       maps.push(m);
     });
@@ -258,7 +274,7 @@ export function mountHollowCube(container, options = {}) {
   const drawNumber = (canvas, nums) => {
     const x = canvas.getContext('2d');
     x.clearRect(0, 0, canvas.width, canvas.height);
-    x.strokeStyle = x.fillStyle = '#000';
+    x.strokeStyle = x.fillStyle = '#fff'; // drawn white; the material colour tints it (numberColor)
     x.lineWidth = stem;
     x.font = FONT;
     x.letterSpacing = (-0.02 * FS) + 'px';
@@ -290,8 +306,9 @@ export function mountHollowCube(container, options = {}) {
         const canvas = document.createElement('canvas');
         canvas.width = PX + (i ? 2 : 0) * STEP; canvas.height = PX;
         const m = new THREE.Mesh(new THREE.PlaneGeometry(NUM_SIZE * canvas.width / PX, NUM_SIZE),
-          flatMat({ name: 'circular_number', map: prepTex(new THREE.CanvasTexture(canvas)) }));
+          flatMat({ name: 'circular_number', map: prepTex(new THREE.CanvasTexture(canvas)), color: state.numberColor }));
         m.name = `${w.name}_circular_number_${i ? 'trio' : 'single'}`;
+        m.scale.setScalar(state.numberScale);
         m.userData.canvas = canvas;
         addLayer(w, m, 'numbers');
         numbers.push(m);
@@ -331,6 +348,25 @@ export function mountHollowCube(container, options = {}) {
   let inView = true;
   const io = new IntersectionObserver(([e]) => { inView = e.isIntersecting; }); io.observe(container);
 
+  /* --- settings that can be eased with transitionTo() --- */
+  const setters = {
+    iconScale: (v) => { state.iconScale = v; icons.forEach((m) => m.scale.setScalar(v)); },
+    numberScale: (v) => { state.numberScale = v; numbers.forEach((m) => m.scale.setScalar(v)); },
+    numberColor: (c) => { state.numberColor = c; numbers.forEach((m) => m.material.color.set(c)); },
+    collageOpacity: (v) => { state.collageOpacity = v; collages.forEach((m) => { m.material.opacity = v; }); },
+    mapOpacity: (v) => { state.mapOpacity = v; mapFade.value = v; maps.forEach((m) => { m.visible = v > 0; }); },
+  };
+  let tween = null;
+  const _from = new THREE.Color(), _to = new THREE.Color();
+  const stepTween = (now) => {
+    const p = Math.min(1, (now - tween.start) / tween.ms), e = p * p * (3 - 2 * p); // smoothstep
+    for (const k in tween.to) {
+      const a = tween.from[k], b = tween.to[k];
+      setters[k](typeof b === 'number' ? a + (b - a) * e : '#' + _from.set(a).lerp(_to.set(b), e).getHexString());
+    }
+    if (p === 1) tween = null;
+  };
+
   /* --- frame loop --- */
   const _p = new THREE.Vector3(), _n = new THREE.Vector3(), _v = new THREE.Vector3(), _axis = new THREE.Vector3();
   const facesCamera = (obj, sign = 1) => {
@@ -343,6 +379,7 @@ export function mountHollowCube(container, options = {}) {
     raf = requestAnimationFrame(frame);
     const dt = Math.min(0.1, (now - last) / 1000); last = now;
     if (!inView) return;
+    if (tween) stepTween(now);
 
     boost *= Math.exp(-dt * 2.5);
     const scrolling = now - lastScrollAt < 180;
@@ -379,7 +416,16 @@ export function mountHollowCube(container, options = {}) {
     setSurfaceOpacity: (v) => { state.surfaceOpacity = v; applySurface(); },
     setSurfacesVisible: (b) => { state.surfacesVisible = b; applySurface(); },
     setGridsVisible: (b) => { state.gridsVisible = b; applyGrids(); },
-    setIconScale: (v) => { state.iconScale = v; icons.forEach((m) => m.scale.setScalar(v)); },
+    setIconScale: setters.iconScale,
+    setNumberScale: setters.numberScale,
+    setNumberColor: setters.numberColor,
+    setCollageOpacity: setters.collageOpacity,
+    setMapOpacity: setters.mapOpacity,
+    // ease any of iconScale, numberScale, numberColor, collageOpacity, mapOpacity to new values over ms
+    transitionTo: (to, ms = 600) => {
+      const from = {}; for (const k in to) if (setters[k]) from[k] = state[k];
+      tween = { from, to: Object.fromEntries(Object.keys(from).map((k) => [k, to[k]])), start: performance.now(), ms };
+    },
     setSpinSpeed: (v) => { state.spinSpeed = v; },
     setTilt: (deg) => { state.tilt = deg; },
     setLayerGap: (pt) => { state.layerGap = pt; applyGap(pt * PT); },

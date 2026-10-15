@@ -13,6 +13,7 @@
   --neutral-600: #4f4d4a;
   --neutral-700: #353332;
   --neutral-900: #191919;
+  --neutral-950: #161414;
 
   --bg: var(--white);
   --text: var(--black);
@@ -239,6 +240,18 @@ html:has(body.landing) {
   aspect-ratio: 1;
   transform: translate(-50%, calc(-50% + 20px)); /* 20pt below centre */
   pointer-events: none;
+  transition: transform 0.6s ease;
+}
+
+/* While the Symbology section is on screen the cube shrinks to 70% (class set in home.html) */
+.landing-square.is-small {
+  transform: translate(-50%, calc(-50% + 20px)) scale(0.7);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-square {
+    transition: none;
+  }
 }
 
 .landing-main {
@@ -328,6 +341,20 @@ html:has(body.landing) {
 .landing-cta:focus-visible {
   outline: 2px solid var(--grey-500);
   outline-offset: 2px;
+}
+
+/* "Design Approach": the same CTA at Figma's size here (64px tall, 12% shadow) */
+.landing-cta--approach {
+  height: 64px;
+  padding: 0 20px 0 32px;
+  border: 0;
+  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.12));
+  cursor: pointer;
+}
+
+.landing-cta--approach:hover,
+.landing-cta--approach:focus-visible {
+  filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.12));
 }
 
 .landing-cta__icon {
@@ -420,23 +447,174 @@ html:has(body.landing) {
   margin-top: 1.12em; /* one empty line between paragraphs */
 }
 
+/* Symbology (Figma "legends-row"): 100.5px icons stacked 100px apart, centred; 160px top/bottom.
+   The icon column and the design approach block share one grid row, so the block can stay
+   centred on screen (sticky) for as long as the icon column is scrolling past. */
+.landing-section--symbology {
+  --symbology-pad: 160px;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--grid-gutter);
+  align-items: start;
+  padding-top: var(--symbology-pad);
+  padding-bottom: var(--symbology-pad);
+}
+
+.landing-symbology {
+  display: flex;
+  grid-row: 1;
+  grid-column: 1 / -1;
+  justify-self: center;
+  flex-direction: column;
+  gap: 100px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.landing-symbology img {
+  display: block;
+}
+
+/* Design approach (Figma "text-a" 377:477): columns 3-10 (8 wide), three equal columns 20px
+   apart; sticks with its centre at the centre of the screen (--approach-h is set by home.html).
+   The top margin starts it at the centre of the screen once the section reaches the top of
+   the screen (minus the section's top padding and 1px divider), not at the top of the section. */
+.landing-approach {
+  position: sticky;
+  top: calc(50dvh - var(--approach-h, 0px) / 2);
+  margin-top: calc(50dvh - var(--approach-h, 0px) / 2 - var(--symbology-pad) - 1px);
+  display: grid;
+  grid-row: 1;
+  grid-column: 3 / 11;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+/* Its three columns fade in one by one as the reader moves through the section (1/4, 2/4, 3/4)
+   and fade out again only when they scroll back out through the top (classes set in home.html) */
+.landing-approach__col {
+  transition: opacity 0.6s ease, visibility 0s;
+}
+
+.landing-approach__col.is-hidden {
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.6s ease, visibility 0s linear 0.6s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-approach__col,
+  .landing-approach__col.is-hidden {
+    transition: none;
+  }
+}
+
+.landing-approach__col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.landing-approach__chips {
+  display: flex;
+}
+
+.landing-chip {
+  padding: 8px 12px;
+  border: 2px solid var(--neutral-950);
+  border-radius: var(--radius-pill);
+  color: var(--neutral-950);
+  font: 600 16px/1.12 var(--font);
+  white-space: nowrap;
+}
+
+.landing-approach__text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 12px;
+  color: var(--neutral-900);
+  font: 500 16px/1.32 var(--font);
+  letter-spacing: -0.16px;
+}
+
+.landing-approach__title {
+  margin: 0;
+  font: 500 24px/1.12 var(--font);
+  letter-spacing: -0.24px;
+}
+
+.landing-approach__text p {
+  margin: 0;
+}
+
+.landing-approach__text p + p {
+  margin-top: 1.32em; /* one empty line between paragraphs */
+}
+
+/* Arrow: Figma centres the line 16px from the column top (the SVG is 14.73px tall) */
+.landing-approach__arrow {
+  min-width: 0;
+  padding-top: calc(16px - 14.7279px / 2);
+}
+
+/* The line spans the column (as wide as it is) up to --draw of its length; the arrowhead
+   (8.37px, its tip 1px past the line end, as in Figma) rides at the line's end */
+.approach-arrow {
+  --draw: 0;
+  --length: calc(var(--draw) * (100% - 1px));
+  position: relative;
+  height: 14.7279px;
+}
+
+.approach-arrow__line {
+  position: absolute;
+  top: calc(14.7279px / 2 - 1px);
+  left: 0;
+  width: var(--length);
+  height: 2px;
+  background: #000;
+}
+
+.approach-arrow__head {
+  position: absolute;
+  top: 0;
+  left: calc(var(--length) + 1px - 8.367px);
+  display: block;
+  opacity: 0;
+}
+
+.approach-arrow.is-drawn .approach-arrow__head {
+  opacity: 1;
+}
+
+/* Closing statement (Figma "closing-statement" 378:538): columns 3-10, 300px top/bottom */
+.landing-section--closing {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--grid-gutter);
+  min-height: 0;
+  padding-top: 300px;
+  padding-bottom: 300px;
+}
+
+.landing-closing {
+  grid-column: 3 / 11;
+  justify-self: center;
+  max-width: 908px; /* Figma's box is 915px; browsers measure the text a little narrower, so
+                       908px (mid of 905-912) reproduces Figma's five line breaks */
+  margin: 0;
+  color: var(--neutral-900);
+  font: 400 56px/1.12 var(--font);
+  letter-spacing: -0.56px;
+  text-align: center;
+}
+
 .landing-section + .landing-section {
   border-top: 1px solid var(--neutral-100);
-}
-
-/* Full-screen modal (e.g. Data Disclaimer) */
-.modal.modal--full {
-  width: var(--app-w); /* full screen even when modals are scaled on tablets */
-  max-width: none;
-  height: var(--app-h);
-  max-height: none;
-  margin: 0;
-  border: 0;
-  border-radius: 0;
-}
-
-.modal--full .modal__body {
-  flex: 1 1 auto;
 }
 
 /* Map */
@@ -2335,6 +2513,70 @@ a.view__map:hover,
   body > :not(.mobile-notice):not(script) {
     visibility: hidden;
   }
+}
+
+/* Design Approach modal (home page): intro, then five cards (Figma 378:539) in 2 columns.
+   Each card: number chip (50px) + short-title chip, then title and text indented under the number. */
+/* Home page modals: the header holds only the close button; the title sits centred at the top
+   of the body, above the centred text */
+.modal__header--close-only {
+  justify-content: flex-end;
+}
+
+.modal__heading {
+  margin: 0 0 12px;
+  color: var(--neutral-900);
+  font: 600 16px/1.12 var(--font);
+  text-align: center;
+}
+
+.approach__intro {
+  max-width: 68ch;
+  margin: 0 auto 32px;
+  padding: 0 12px;
+  text-align: center;
+  color: var(--neutral-900);
+  font: 500 16px/1.32 var(--font);
+  letter-spacing: -0.16px;
+}
+
+.approach__cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px var(--grid-gutter);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.approach-card__chips {
+  display: flex;
+}
+
+.approach-card__num {
+  display: flex;
+  justify-content: center;
+  width: 50px;
+}
+
+.approach-card__text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 12px 12px calc(50px + 12px);
+  color: var(--neutral-900);
+  font: 500 16px/1.32 var(--font);
+  letter-spacing: -0.16px;
+}
+
+.approach-card__title {
+  margin: 0;
+  font: 500 24px/1.12 var(--font);
+  letter-spacing: -0.24px;
+}
+
+.approach-card__text p {
+  margin: 0;
 }
 
 /* Long-form text in modals (About): brand font, centered column and text,
