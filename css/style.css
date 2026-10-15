@@ -629,6 +629,80 @@ html:has(body.landing) {
   text-align: center;
 }
 
+/* Credits (Figma 387:551): columns 3-10, four equal columns 12px apart (the third is empty),
+   240px top/bottom; 16px text, roles in grey italic, links in brand red and underlined */
+.landing-section--credits {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--grid-gutter);
+  min-height: 0;
+  padding-top: 240px;
+  padding-bottom: 240px;
+}
+
+.landing-credits {
+  display: grid;
+  grid-column: 3 / 11;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  align-items: start;
+  color: #000;
+  font: 500 16px/1.12 var(--font);
+  letter-spacing: -0.16px;
+}
+
+.landing-credits__label,
+.landing-credits p,
+.landing-credits__team {
+  margin: 0;
+  font: inherit;
+}
+
+.landing-credits p + p,
+.landing-credits__team li + li {
+  margin-top: 1.12em; /* one empty line */
+}
+
+.landing-credits__team {
+  padding: 0;
+  list-style: none;
+}
+
+.landing-credits__name,
+.landing-credits__role {
+  display: block;
+  width: fit-content;
+}
+
+.landing-credits__role {
+  color: var(--neutral-600);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.landing-credits__link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #ff0000;
+  font: inherit;
+  letter-spacing: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: from-font;
+  text-underline-position: from-font;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.landing-credits__link:hover {
+  opacity: 0.6;
+}
+
+.landing-credits__link:focus-visible {
+  outline: 2px solid var(--grey-500);
+  outline-offset: 2px;
+}
+
 .landing-section + .landing-section {
   border-top: 1px solid var(--neutral-100);
 }

@@ -6,7 +6,7 @@
   <title>Design Directory: BDO.</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,400;0,500;0,600;1,400&display=swap">
   <!-- Host Grotesk 600 for the cube's circular numbers (same URL the module checks for) -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@600&display=swap">
   <link rel="stylesheet" href="css/style.css">
@@ -54,6 +54,24 @@
     </svg>
   </div>
   <noscript><style>.landing-loader { display: none; }</style></noscript>
+  <script>
+    // Every load (reload, back/forward, a link with #section) starts at the top: the hero in its
+    // initial state. No scroll restoration and no #anchor jump; a late pass after load only runs
+    // if the visitor hasn't started scrolling yet.
+    (() => {
+      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+      if (location.hash) history.replaceState(null, "", location.pathname + location.search);
+      const toTop = () => scrollTo({ top: 0, left: 0, behavior: "instant" });
+      let interacted = false;
+      for (const type of ["wheel", "touchmove", "keydown", "pointerdown"]) {
+        addEventListener(type, () => { interacted = true; }, { once: true, passive: true });
+      }
+      toTop();
+      addEventListener("DOMContentLoaded", toTop);
+      addEventListener("load", () => { if (!interacted) toTop(); });
+      addEventListener("pageshow", (event) => { if (event.persisted) toTop(); });
+    })();
+  </script>
   <script>
     (() => {
       const COLOR_MS = 2600; // black to red; the loader closes when this finishes at the latest
@@ -198,6 +216,50 @@
     <!-- Closing statement (Figma "closing-statement" 378:538): 8 columns, centred, 300px top/bottom -->
     <section class="landing-section landing-section--closing" id="closing" aria-label="Closing statement">
       <p class="landing-closing">Built as a Practical, Open Reference, Design Directory Bandung Brings Practitioners, Students, Associations, &amp; Communities Into a One Shared View.</p>
+    </section>
+
+    <!-- Credits (Figma 387:551): 8 columns, four equal columns (the third is empty), 240px top/bottom.
+         Links in brand red: Braga Technologies (braga.co.id), LEGAL (Data Disclaimer modal), names (LinkedIn) -->
+    <section class="landing-section landing-section--credits" id="credits" aria-label="Credits">
+      <div class="landing-credits">
+        <div class="landing-credits__col">
+          <h2 class="landing-credits__label">DATA DISCLAIMER</h2>
+          <p>Accuracy level, the visualization design, workflow of the datas, applied subjective choice and manual data modifications are to be considered.</p>
+          <p>To utilize geospatial services for actual decision making, analysis, or any other critical needs, please reach out to our representatives at <a class="landing-credits__link" href="https://braga.co.id/" target="_blank" rel="noopener noreferrer">Braga Technologies.</a></p>
+        </div>
+        <div class="landing-credits__col">
+          <h2 class="landing-credits__label"><button class="landing-credits__link" type="button" data-modal="modal-disclaimer" aria-haspopup="dialog">LEGAL</button></h2>
+          <p>The geospatial data being showcased here has been curated limited for ADGI26 Design Week exhibition only.</p>
+        </div>
+        <div class="landing-credits__col" aria-hidden="true"></div>
+        <div class="landing-credits__col">
+          <h2 class="landing-credits__label">CREDITS:</h2>
+          <ul class="landing-credits__team">
+          <li>
+            <a class="landing-credits__link landing-credits__name" href="https://www.linkedin.com/in/dindi-khaerul-50bb2719a/" target="_blank" rel="noopener noreferrer">Dindi Khaerul</a>
+            <span class="landing-credits__role">Data Acquisition</span>
+          </li>
+          <li>
+            <a class="landing-credits__link landing-credits__name" href="https://www.linkedin.com/in/puteri-aprilia-aries-tantin-550303110/" target="_blank" rel="noopener noreferrer">Puteri Ariestantin</a>
+            <span class="landing-credits__role">Symbology, Installation, Graphic Design</span>
+          </li>
+          <li>
+            <a class="landing-credits__link landing-credits__name" href="https://www.linkedin.com/in/yasin-abdillah-5a8641118/" target="_blank" rel="noopener noreferrer">M Yasin Abdillah</a>
+            <span class="landing-credits__role">Web Map &amp; Site, Installation, Graphic Design</span>
+          </li>
+          <li>
+            <a class="landing-credits__link landing-credits__name" href="https://www.linkedin.com/in/greetadnan/" target="_blank" rel="noopener noreferrer">Kemal Aditia</a>
+            <a class="landing-credits__link landing-credits__name" href="https://www.linkedin.com/in/dzakky-hazimy/" target="_blank" rel="noopener noreferrer">Dzakky Hazimy</a>
+            <span class="landing-credits__role">Logistics</span>
+          </li>
+          <li>
+            <a class="landing-credits__link landing-credits__name" href="https://www.linkedin.com/in/fadhilla-muhammad-5231121b4/" target="_blank" rel="noopener noreferrer">Fadhilla Muhammad</a>
+            <a class="landing-credits__link landing-credits__name" href="https://www.linkedin.com/in/ayuningtias-ramadhani-b47a13195/" target="_blank" rel="noopener noreferrer">Ayuningtias Ramadhani</a>
+            <span class="landing-credits__role">Production, Installation</span>
+          </li>
+          </ul>
+        </div>
+      </div>
     </section>
   </main>
 
