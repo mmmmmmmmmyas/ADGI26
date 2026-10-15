@@ -381,6 +381,22 @@ html:has(body.landing) {
   white-space: nowrap;
 }
 
+/* Braga Technologies logo: links to braga.co.id (the footer itself lets clicks through) */
+.landing-footer__partner-link {
+  display: block;
+  pointer-events: auto;
+  transition: opacity 0.15s ease;
+}
+
+.landing-footer__partner-link:hover {
+  opacity: 0.6;
+}
+
+.landing-footer__partner-link:focus-visible {
+  outline: 2px solid var(--grey-500);
+  outline-offset: 4px;
+}
+
 .landing-footer__partner {
   display: block;
 }
