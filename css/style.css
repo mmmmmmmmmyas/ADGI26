@@ -239,6 +239,7 @@ html:has(body.landing) {
   width: calc(((100vw - 2 * var(--grid-margin) - 11 * var(--grid-gutter)) / 12 * 5 + 4 * var(--grid-gutter)) * 1.5);
   aspect-ratio: 1;
   transform: translate(-50%, calc(-50% + 20px)); /* 20pt below centre */
+  translate: 0 var(--cube-stop, 0px); /* moves it up with the page past its stop point (home.html) */
   pointer-events: none;
   transition: transform 0.6s ease;
 }
@@ -257,7 +258,6 @@ html:has(body.landing) {
 .landing-main {
   position: relative;
   z-index: 1;
-  padding-bottom: 80px; /* space under the last section at the very bottom of the page */
 }
 
 /* Loading screen: full white, the logo (nav size) centred; fades out once the cube is ready */
@@ -607,14 +607,22 @@ html:has(body.landing) {
   opacity: 1;
 }
 
-/* Closing statement (Figma "closing-statement" 378:538): columns 3-10, 300px top/bottom */
+/* Closing statement (Figma "closing-statement" 378:538): columns 3-10, 300px top, 40px bottom */
 .landing-section--closing {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: var(--grid-gutter);
   min-height: 0;
   padding-top: 300px;
-  padding-bottom: 300px;
+  padding-bottom: 40px;
+}
+
+/* The 3D section overlaps the bottom of this one by 80px; the statement stays on top of the
+   3D graphic and lets clicks through, so the model can still be dragged under it */
+.landing-section--closing {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
 }
 
 .landing-closing {
@@ -701,6 +709,43 @@ html:has(body.landing) {
 .landing-credits__link:focus-visible {
   outline: 2px solid var(--grey-500);
   outline-offset: 2px;
+}
+
+/* Display: the 3D standee viewer in a frame, the full width of the page, between the closing
+   statement and Credits. Height = 16:10 of the 8-column width (at least 520px), plus 30% (the
+   viewer keeps the model at its size, centred). White, like the page, with no section dividers
+   above or below it. Its top and bottom edges fade out (80px) so anything cut off at the edge
+   melts into the page. */
+.landing-main .landing-section.landing-section--display,
+.landing-main .landing-section--display + .landing-section {
+  border-top: 0; /* stronger than the .landing-section + .landing-section divider below */
+}
+
+.landing-section--display {
+  position: relative;
+  z-index: 1;
+  display: block;
+  min-height: 0;
+  margin-top: -160px; /* -80px gap: the frame's top 80px sits under the closing statement's text */
+  padding: 40px 0 0;
+}
+
+.landing-display {
+  position: relative;
+  width: 100%;
+  height: calc(max(520px, calc(((100vw - 2 * var(--grid-margin) - 11 * var(--grid-gutter)) / 12 * 8 + 7 * var(--grid-gutter)) * 10 / 16)) * 1.3);
+  overflow: hidden;
+  background: var(--bg);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 80px, #000 calc(100% - 80px), transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 80px, #000 calc(100% - 80px), transparent);
+}
+
+.landing-display__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 
 .landing-section + .landing-section {

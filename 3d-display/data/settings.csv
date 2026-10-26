@@ -1,0 +1,8 @@
+key,value,note
+gap_max_cm,20,pane gap at or below zoom_low_pct
+gap_min_cm,2,pane gap at or above zoom_high_pct
+zoom_low_pct,120,zoom where panes start closing
+zoom_high_pct,220,zoom where panes are fully closed
+show_downloads,1,1 = show OBJ/GLB download buttons · 0 = hide
+rotate_on,1,1 = turntable rotation on at load · 0 = off
+rotate_speed,2,0.1–4 (1 ≈ one turn per minute)

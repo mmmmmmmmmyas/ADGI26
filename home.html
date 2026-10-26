@@ -213,9 +213,17 @@
       </div>
     </section>
 
-    <!-- Closing statement (Figma "closing-statement" 378:538): 8 columns, centred, 300px top/bottom -->
+    <!-- Closing statement (Figma "closing-statement" 378:538): 8 columns, centred, 300px top, 40px bottom -->
     <section class="landing-section landing-section--closing" id="closing" aria-label="Closing statement">
       <p class="landing-closing">Built as a Practical, Open Reference, Design Directory Bandung Brings Practitioners, Students, Associations, &amp; Communities Into a One Shared View.</p>
+    </section>
+
+    <!-- Display: the 3D lightbox standee (from 3d-display.zip) on white in its own frame, the full width of
+         the page, its top and bottom edges faded into the page. Drag to orbit, zoom slider, turntable. -->
+    <section class="landing-section landing-section--display" id="display" aria-label="3D display">
+      <div class="landing-display">
+        <iframe class="landing-display__frame" src="3d-display/index.html" title="Interactive 3D model of the lightbox standee" loading="lazy"></iframe>
+      </div>
     </section>
 
     <!-- Credits (Figma 387:551): 8 columns, four equal columns (the third is empty), 240px top/bottom.
@@ -261,6 +269,7 @@
         </div>
       </div>
     </section>
+
   </main>
 
   <!-- Soft grey glow behind the bottom of the screen (Figma "texture") -->
@@ -427,8 +436,21 @@
       arrowDraw = progress < 0 ? 0 : Math.max(arrowDraw, Math.min(1, (progress - 1 / 4) / (1 / 2)));
       arrow.style.setProperty("--draw", arrowDraw);
       arrow.classList.toggle("is-drawn", arrowDraw > 0);
+      updateCubeStop();
     };
     approachSteps.forEach(({ col }) => col.classList.add("is-hidden"));
+
+    // The cube stays fixed at the centre of the screen until it reaches its stop point near the top
+    // of the closing statement section: 20% of the way from the section's top to its centre. From
+    // there it scrolls up with the page, so it never sits lower than that point.
+    const closing = document.getElementById("closing");
+    const cubeSquare = document.querySelector(".landing-square");
+    const updateCubeStop = () => {
+      const rect = closing.getBoundingClientRect();
+      const stopPoint = rect.top + 0.2 * (rect.height / 2);
+      const cubeCentre = innerHeight / 2 + 20; // .landing-square sits 20px below the screen centre
+      cubeSquare.style.setProperty("--cube-stop", `${Math.min(0, stopPoint - cubeCentre)}px`);
+    };
     updateApproach();
     addEventListener("scroll", () => { approachFrame ||= requestAnimationFrame(updateApproach); }, { passive: true });
     addEventListener("resize", updateApproach);

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Creative City Ecosystem — Lightbox Standee</title>
+<meta name="description" content="Interactive 3D model of the Creative City Ecosystem lightbox standee with layered maps.">
+<meta name="theme-color" content="#ffffff">
+<meta name="color-scheme" content="light">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Creative City Ecosystem — Lightbox Standee">
+<meta property="og:description" content="Interactive 3D model of the lightbox standee with layered maps.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/map-layer-1.webp" as="image">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.184.0/build/three.module.js",
+    "three/addons/controls/OrbitControls.js": "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js",
+    "three/addons/exporters/OBJExporter.js": "https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js",
+    "three/addons/exporters/GLTFExporter.js": "https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js"
+  },
+  "integrity": {
+    "https://unpkg.com/three@0.184.0/build/three.module.js": "sha384-8FCZ1eVO6it4+pbec2aDtnTrwjWXZLJRC+MAGCIPDgsYnUrl/E0A2YlF8ioMKI/J",
+    "https://unpkg.com/three@0.184.0/build/three.core.js": "sha384-dw2ooPewaEIrAgl6oFDBmmBWCE9oW9LxRGcfwZ0hLvEprzo202wXl7vCYHRlSnOT",
+    "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js": "sha384-4rziNxOBZKQ69i+w+f89KJ55TCYquwchVbByQwmaOeIOXdOU2PLDn3kOfXHwIJC9",
+    "https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js": "sha384-nbwtoZENJD3Vq+ACK0CuGQdPMuDWHkamC2KJD70EV5nfg6jQjfppKOea07YJN+N3",
+    "https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js": "sha384-VofkvpG6HERhFCYbsUOHeNXBCqID2nfqkQqnVzE1jc/oPcz+qJ13ADdXH08hE+cQ"
+  }
+}
+</script>
+<style>
+  html, body { margin: 0; height: 100%; background: #fff; overflow: hidden; } /* wheel passes through to the home page */
+  three-d-stage { display: block; position: fixed; inset: 0; touch-action: none; opacity: 0; transition: opacity .6s ease; }
+  body.ready three-d-stage { opacity: 1; }
+  .ui { position: fixed; left: 50%; transform: translateX(-50%); color: rgba(25,25,25,.75); font: 500 12.5px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; white-space: nowrap; pointer-events: none; user-select: none; }
+  /* Zoom slider: pill outline (no fill, 1.75px, drawn as an inset ring because browsers round
+     border widths to whole pixels) and bar in #353332 (the home page's dark grey; bar at 50%,
+     handle at 80% with the zoom icon). The whole control sits at 30% until it is hovered itself. */
+  #hud { bottom: calc(96px + env(safe-area-inset-bottom)); /* clear of the home page's bottom bar */ display: flex; align-items: center; padding: 5px; border: 0; border-radius: 999px; background: none; box-shadow: inset 0 0 0 1.75px #353332; pointer-events: auto; opacity: 0; transition: opacity .3s ease; }
+  body.ready #hud { opacity: .3; }
+  body.ready #hud:hover, body.ready #hud:focus-within { opacity: 1; }
+  #hud input[type="range"] { -webkit-appearance: none; appearance: none; display: block; width: 200px; height: 14px; margin: 0; background: none; cursor: pointer; } /* as tall as the handle: the pill hugs it */
+  #hud input[type="range"]::-webkit-slider-runnable-track { height: 4px; border-radius: 999px; background: rgba(53,51,50,.5); }
+  #hud input[type="range"]::-moz-range-track { height: 4px; border-radius: 999px; background: rgba(53,51,50,.5); }
+  #hud input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; margin-top: -5px; border: 0; border-radius: 50%; background: rgba(53,51,50,.8) url("assets/ic-zoom.svg") center / 6px no-repeat; }
+  #hud input[type="range"]::-moz-range-thumb { width: 14px; height: 14px; border: 0; border-radius: 50%; background: rgba(53,51,50,.8) url("assets/ic-zoom.svg") center / 6px no-repeat; }
+  #hud input[type="range"]:focus-visible { outline: 2px solid rgba(53,51,50,.6); outline-offset: 4px; border-radius: 999px; }
+  @media (max-width: 420px) { #hud input[type="range"] { width: 140px; } }
+  #loader { top: 50%; transform: translate(-50%, -50%); letter-spacing: .04em; color: rgba(25,25,25,.45); }
+  .nojs { position: fixed; inset: 0; display: grid; place-items: center; color: #191919; font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+</style>
+</head>
+<body>
+<three-d-stage name="lightbox-standee" background="#fff" aria-label="Interactive 3D model of the lightbox standee"></three-d-stage>
+<div id="loader" class="ui" role="status">Loading…</div>
+<!-- Zoom slider (100%–240%, opens at 200%), bottom centre; rotation runs on its own (data/settings.csv) -->
+<div id="hud" class="ui">
+  <input id="zoom" type="range" min="100" max="240" step="1" value="200" aria-label="Zoom">
+</div>
+<noscript><div class="nojs">This 3D viewer needs JavaScript and WebGL.</div></noscript>
+<script src="src/three-d-stage.js"></script>
+<script type="module" src="src/app.js"></script>
+</body>
+</html>
