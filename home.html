@@ -134,7 +134,7 @@
     <nav class="landing-nav__pill" aria-label="Sections">
       <a href="#intro">Home</a>
       <a href="#symbology">Symbology</a>
-      <a href="#display">Installation</a>
+      <a href="#closing">Installation</a>
     </nav>
     <a class="map-nav__logo landing-nav__logo" href="map.html" aria-label="Design Directory: BDO. — open the map">
       <!-- Inline copy of assets/brand/logo.svg so CSS can recolour it on hover (as on the map) -->
@@ -473,6 +473,14 @@
       event.preventDefault();
       const rect = symbology.getBoundingClientRect();
       scrollTo({ top: rect.top + scrollY + 0.1 * rect.height, behavior: "smooth" });
+    });
+
+    // "Installation" lands a third of the way into the closing statement section, so the statement
+    // sits just below the top nav with the 3D display underneath it
+    document.querySelector('.landing-nav__pill a[href="#closing"]').addEventListener("click", (event) => {
+      event.preventDefault();
+      const rect = document.getElementById("closing").getBoundingClientRect();
+      scrollTo({ top: rect.top + scrollY + rect.height / 3, behavior: "smooth" });
     });
 
     // The cube stays fixed at the centre of the screen until the end of the Symbology section
