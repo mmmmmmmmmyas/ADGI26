@@ -376,7 +376,7 @@ const cam = stage._camera, ctl = stage._controls;
 cam.near = 0.05; cam.far = 200; cam.updateProjectionMatrix();
 // 100% zoom reference = original framing distance (3.5 m)
 const baseDist = 3.5;
-const ZOOM_MIN = 100, ZOOM_MAX = 240, ZOOM_DEFAULT = 200; // %, also the slider's range in index.html
+const ZOOM_MIN = 100, ZOOM_MAX = 240, ZOOM_DEFAULT = 220; // %, also the slider's range in index.html
 ctl.minDistance = baseDist / (ZOOM_MAX / 100);  // max 240%
 ctl.maxDistance = baseDist / (ZOOM_MIN / 100);  // min 100%
 // Zoom is set with the slider only, so scrolling over the frame scrolls the home page
@@ -404,8 +404,13 @@ const modelCentre = new THREE.Box3().setFromObject(model).getCenter(new THREE.Ve
 cam.position.add(modelCentre.clone().sub(ctl.target));
 ctl.target.copy(modelCentre);
 ctl.enablePan = false;
-// Default zoom: 200%
-cam.position.sub(ctl.target).setLength(baseDist / (ZOOM_DEFAULT / 100)).add(ctl.target);
+// Default tilt: 10% further toward the viewer than the original view (as if dragged down):
+// the camera's angle from straight overhead × 0.9 (≈52.7° → 47.4°)
+const view = new THREE.Spherical().setFromVector3(cam.position.clone().sub(ctl.target));
+view.phi *= 0.9;
+// Default zoom: 220%
+view.radius = baseDist / (ZOOM_DEFAULT / 100);
+cam.position.copy(ctl.target).add(new THREE.Vector3().setFromSpherical(view));
 ctl.update();
 ctl.addEventListener('change', showZoom);
 showZoom();
