@@ -607,13 +607,13 @@ html:has(body.landing) {
   opacity: 1;
 }
 
-/* Closing statement (Figma "closing-statement" 378:538): columns 3-10, 300px top, 40px bottom */
+/* Closing statement (Figma "closing-statement" 378:538): columns 3-10, 380px top, 40px bottom */
 .landing-section--closing {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: var(--grid-gutter);
   min-height: 0;
-  padding-top: 300px;
+  padding-top: 380px;
   padding-bottom: 40px;
 }
 
