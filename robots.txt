@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ddb26.braga.co.id/sitemap.xml

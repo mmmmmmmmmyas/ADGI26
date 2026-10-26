@@ -3,7 +3,32 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Design Directory: BDO.</title>
+  <title>Design Directory Bandung · ADGI Design Week 2026</title>
+  <meta name="description" content="Design Directory Bandung maps 60 design agencies and studios across Bandung Creative City: an open reference built for ADGI Design Week 2026.">
+  <link rel="canonical" href="https://ddb26.braga.co.id/">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <!-- Link previews (WhatsApp, LinkedIn, X, Slack, ...) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Design Directory Bandung">
+  <meta property="og:title" content="Design Directory Bandung · ADGI Design Week 2026">
+  <meta property="og:description" content="Design Directory Bandung maps 60 design agencies and studios across Bandung Creative City: an open reference built for ADGI Design Week 2026.">
+  <meta property="og:url" content="https://ddb26.braga.co.id/">
+  <meta property="og:image" content="https://ddb26.braga.co.id/assets/brand/share.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="The Design Directory: BDO. logo over a map of Bandung with its numbered design studios">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Design Directory Bandung · ADGI Design Week 2026">
+  <meta name="twitter:description" content="Design Directory Bandung maps 60 design agencies and studios across Bandung Creative City: an open reference built for ADGI Design Week 2026.">
+  <meta name="twitter:image" content="https://ddb26.braga.co.id/assets/brand/share.jpg">
+  <!-- Vercel Web Analytics (cookieless; enable it in the Vercel project's Analytics tab) -->
+  <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+  <script defer src="/_vercel/insights/script.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,400;0,500;0,600;1,400&display=swap">
@@ -108,6 +133,8 @@
   <header class="landing-nav">
     <nav class="landing-nav__pill" aria-label="Sections">
       <a href="#intro">Home</a>
+      <a href="#symbology">Symbology</a>
+      <a href="#display">Installation</a>
     </nav>
     <a class="map-nav__logo landing-nav__logo" href="map.html" aria-label="Design Directory: BDO. — open the map">
       <!-- Inline copy of assets/brand/logo.svg so CSS can recolour it on hover (as on the map) -->
@@ -440,14 +467,20 @@
     };
     approachSteps.forEach(({ col }) => col.classList.add("is-hidden"));
 
-    // The cube stays fixed at the centre of the screen until it reaches its stop point near the top
-    // of the closing statement section: 20% of the way from the section's top to its centre. From
-    // there it scrolls up with the page, so it never sits lower than that point.
-    const closing = document.getElementById("closing");
+    // "Symbology" in the top nav lands 10% into the section (not at its very top), past the point
+    // where "Graphic Design" appears, so the section never opens on its empty initial state
+    document.querySelector('.landing-nav__pill a[href="#symbology"]').addEventListener("click", (event) => {
+      event.preventDefault();
+      const rect = symbology.getBoundingClientRect();
+      scrollTo({ top: rect.top + scrollY + 0.1 * rect.height, behavior: "smooth" });
+    });
+
+    // The cube stays fixed at the centre of the screen until the end of the Symbology section
+    // reaches it; from there it scrolls up with the page, so it never sits lower than that point.
+    // (At that point it also leaves its small Symbology look; see the module script.)
     const cubeSquare = document.querySelector(".landing-square");
     const updateCubeStop = () => {
-      const rect = closing.getBoundingClientRect();
-      const stopPoint = rect.top + 0.2 * (rect.height / 2);
+      const stopPoint = symbology.getBoundingClientRect().bottom;
       const cubeCentre = innerHeight / 2 + 20; // .landing-square sits 20px below the screen centre
       cubeSquare.style.setProperty("--cube-stop", `${Math.min(0, stopPoint - cubeCentre)}px`);
     };
@@ -466,9 +499,9 @@
     });
     cube.ready.then(() => window.landingAssetsReady?.()); // lets the loading screen close
 
-    // While the Symbology section covers the middle of the screen: the cube shrinks to 70% (css),
-    // its icons grow 30%, its number circles grow 40% and turn red, and its collages and maps fade out.
-    // Everything eases back when the section leaves.
+    // While the Symbology section is behind the cube's centre: the cube shrinks to 70% (css), its
+    // icons grow 30%, its number circles grow 40% and turn red, and its collages and maps fade out.
+    // Everything eases back when the section leaves, including at its end, where the cube stops.
     const square = document.querySelector(".landing-square");
     const base = cube.getSettings();
     const SYMBOLOGY_LOOK = {
@@ -479,10 +512,22 @@
       mapOpacity: 0,
     };
     const NORMAL_LOOK = Object.fromEntries(Object.keys(SYMBOLOGY_LOOK).map((key) => [key, base[key]]));
-    new IntersectionObserver(([entry]) => {
-      square.classList.toggle("is-small", entry.isIntersecting);
-      cube.transitionTo(entry.isIntersecting ? SYMBOLOGY_LOOK : NORMAL_LOOK);
-    }, { rootMargin: "-50% 0px -50% 0px" }).observe(document.getElementById("symbology"));
+    const symbologySection = document.getElementById("symbology");
+    let inSymbology = null;
+    let symbologyFrame = 0;
+    const checkSymbology = () => {
+      symbologyFrame = 0;
+      const rect = symbologySection.getBoundingClientRect();
+      const cubeCentre = innerHeight / 2 + 20; // .landing-square sits 20px below the screen centre
+      const inside = rect.top <= cubeCentre && rect.bottom > cubeCentre;
+      if (inside === inSymbology) return;
+      inSymbology = inside;
+      square.classList.toggle("is-small", inside);
+      cube.transitionTo(inside ? SYMBOLOGY_LOOK : NORMAL_LOOK);
+    };
+    checkSymbology();
+    addEventListener("scroll", () => { symbologyFrame ||= requestAnimationFrame(checkSymbology); }, { passive: true });
+    addEventListener("resize", checkSymbology);
 
     // Tuning panel only with ?controls (e.g. home.html?controls)
     if (new URLSearchParams(location.search).has("controls")) {

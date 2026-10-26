@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page not found · Design Directory Bandung</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@500;600&display=swap">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* Not-found page: logo, message and the two ways back, centred on the page */
+    .not-found {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      min-height: 100dvh;
+      padding: var(--grid-margin);
+      color: var(--neutral-900);
+      text-align: center;
+    }
+
+    .not-found__title {
+      margin: 0;
+      font: 500 40px/1.12 var(--font);
+      letter-spacing: -0.4px;
+    }
+
+    .not-found__text {
+      margin: 0;
+      color: var(--neutral-600);
+      font: 500 16px/1.32 var(--font);
+    }
+  </style>
+</head>
+<body class="landing">
+  <main class="not-found">
+    <img src="/assets/brand/logo.svg" width="190" height="48" alt="Design Directory: BDO.">
+    <h1 class="not-found__title">Page not found</h1>
+    <p class="not-found__text">This page doesn’t exist or has moved.</p>
+    <nav class="landing-nav__pill" aria-label="Ways back">
+      <a href="/">Home</a>
+      <a href="/map.html">Map</a>
+    </nav>
+  </main>
+</body>
+</html>
